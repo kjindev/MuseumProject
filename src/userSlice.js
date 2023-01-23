@@ -9,8 +9,12 @@ const userSlice = createSlice({
       state.userEmail = action.payload.userEmail;
       state.userName = action.payload.userName;
     },
+    userNameEdit: (state, action) => {
+      console.log(action);
+      state.userName = action.payload.userName;
+    },
   },
 });
 
 export default userSlice;
-export const { afterLogIn } = userSlice.actions;
+export const { afterLogIn, userNameEdit } = userSlice.actions;

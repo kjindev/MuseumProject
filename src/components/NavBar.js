@@ -20,6 +20,7 @@ export default function NavBar({ handleScrollView, navName }) {
 
   const menuIconRef = useRef();
   const menuRef = useRef();
+  const tooltipRef = useRef();
 
   const [menuVisible, setMenuVisible] = useState();
 
@@ -42,6 +43,10 @@ export default function NavBar({ handleScrollView, navName }) {
     setMenuVisible(false);
     menuIconRef.current.classList.remove("hidden");
     menuRef.current.classList.add("hidden");
+  };
+
+  const handleTooltip = () => {
+    tooltipRef.current.classList.remove("hidden");
   };
 
   return (
@@ -113,9 +118,9 @@ export default function NavBar({ handleScrollView, navName }) {
           </div>
         </div>
       </div>
-      <div className="bg-white h-[7vh] px-[2%] flex items-center justify-between">
+      <div className="p-3 flex justify-between relative">
         <div className="logo-font text-lg">OurMuseum</div>
-        <div className="invisible md:visible flex items-center">
+        <div className="invisible md:visible flex">
           <div className={navName === "intro" ? textStyleObserve : textStyle}>
             소개
           </div>
@@ -132,25 +137,37 @@ export default function NavBar({ handleScrollView, navName }) {
           </div>
           {!isLoggedIn && (
             <Link to="/LogIn">
-              <div className="ml-5 px-3 py-1  cursor-pointer text-sm border border-black hover:bg-yellow-600 hover:border-yellow-600">
+              <div className="ml-5 px-3 py-1 cursor-pointer text-sm border border-black hover:bg-yellow-600 hover:border-yellow-600">
                 로그인
               </div>
             </Link>
           )}
           {isLoggedIn && (
             <div
-              onClick={handleLogOut}
-              className="ml-5 px-3 py-1  cursor-pointer text-sm border border-black hover:bg-yellow-600 hover:border-yellow-600"
+              onMouseOver={() => tooltipRef.current.classList.remove("hidden")}
+              onMouseOut={() => tooltipRef.current.classList.add("hidden")}
+              className="ml-5 px-3 py-1 cursor-pointer text-sm border border-black"
             >
-              로그아웃
+              <div>{`${userInfo.userName.substr(0, 6)}...`}님</div>
+              <div ref={tooltipRef} className="z-[2] hidden">
+                <Link to="/userPage">
+                  <div className="mt-1 hover:text-yellow-600">마이페이지</div>
+                </Link>
+                <div
+                  onClick={handleLogOut}
+                  className="mt-1 hover:text-yellow-600"
+                >
+                  로그아웃
+                </div>
+              </div>
             </div>
           )}
         </div>
-        <div className="self-center z-[2] md:hidden">
+        <div className="z-[2] md:hidden">
           <div ref={menuIconRef}>
             <BsList
               onClick={handleMenuClick}
-              size={22}
+              size={25}
               className={menuVisible ? "hidden" : "hover:cursor-pointer"}
             />
           </div>
@@ -158,7 +175,7 @@ export default function NavBar({ handleScrollView, navName }) {
             <BsX
               onClick={handleXClick}
               color="white"
-              size={30}
+              size={25}
               className={!menuVisible ? "hidden" : "hover:cursor-pointer"}
             />
           </div>
