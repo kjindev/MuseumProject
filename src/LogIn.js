@@ -50,7 +50,11 @@ export default function LogIn() {
         data = await signInWithEmailAndPassword(auth, email, password);
       }
     } catch (error) {
-      alert("가입되지 않은 정보입니다.");
+      if (newAccount) {
+        alert("이미 가입된 정보입니다.");
+      } else {
+        alert("가입되지 않은 정보입니다.");
+      }
     }
   };
 

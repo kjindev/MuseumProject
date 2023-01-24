@@ -2,19 +2,24 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const userSlice = createSlice({
   name: "userInformation",
-  initialState: { userEmail: null, userID: null, userName: null },
+  initialState: {
+    userEmail: null,
+    userName: null,
+    userPhoto: null,
+  },
   reducers: {
-    afterLogIn: (state, action) => {
-      state.userID = action.payload.userID;
-      state.userEmail = action.payload.userEmail;
-      state.userName = action.payload.userName;
+    userEmailUpdate: (state, action) => {
+      state.userEmail = action.payload;
     },
-    userNameEdit: (state, action) => {
-      console.log(action);
-      state.userName = action.payload.userName;
+    userNameUpdate: (state, action) => {
+      state.userName = action.payload;
+    },
+    userPhotoUpdate: (state, action) => {
+      state.userPhoto = action.payload;
     },
   },
 });
 
 export default userSlice;
-export const { afterLogIn, userNameEdit } = userSlice.actions;
+export const { userEmailUpdate, userNameUpdate, userPhotoUpdate } =
+  userSlice.actions;

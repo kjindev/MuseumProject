@@ -5,7 +5,7 @@ import UserPage from "./UserPage";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { logIn, logOut } from "./authSlice";
-import { afterLogIn } from "./userSlice";
+import { userEmailUpdate, userNameUpdate, userPhotoUpdate } from "./userSlice";
 import { useEffect } from "react";
 
 function App() {
@@ -16,13 +16,17 @@ function App() {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         dispatch(logIn());
-        dispatch(
-          afterLogIn({
-            userID: user.uid,
-            userEmail: user.email,
-            userName: user.email,
-          })
-        );
+        dispatch(userEmailUpdate(user.email));
+        dispatch(userNameUpdate(user.displayName));
+        if (user.photoURL === null) {
+          dispatch(
+            userPhotoUpdate(
+              "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+            )
+          );
+        } else {
+          dispatch(userPhotoUpdate(user.photoURL));
+        }
       } else {
         dispatch(logOut());
       }

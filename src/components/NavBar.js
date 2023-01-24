@@ -12,8 +12,9 @@ export default function NavBar({ handleScrollView, navName }) {
     return state.userInformation;
   });
 
-  const textStyle = "ml-5 py-1 cursor-pointer text-sm";
-  const textStyleObserve = "ml-5 py-1 cursor-pointer text-yellow-600 text-sm";
+  const textStyle = "ml-5 py-1 cursor-pointer text-sm maxmd:hidden";
+  const textStyleObserve =
+    "ml-5 py-1 cursor-pointer text-yellow-600 text-sm maxmd:hidden";
   const menuTextStyle = "ml-5 mb-2 cursor-pointer text-white text-sm";
   const menuTextStyleObserve =
     "ml-5 mb-2 cursor-pointer text-yellow-600 text-sm";
@@ -45,10 +46,6 @@ export default function NavBar({ handleScrollView, navName }) {
     menuRef.current.classList.add("hidden");
   };
 
-  const handleTooltip = () => {
-    tooltipRef.current.classList.remove("hidden");
-  };
-
   return (
     <div onClick={handleScrollView} className="fixed z-[2] w-[100%]">
       <div
@@ -58,9 +55,22 @@ export default function NavBar({ handleScrollView, navName }) {
         <div className="pt-[7vh] flex flex-col">
           <div className="mx-5 mb-7 text-xs text-white border border-white p-5">
             <div className="flex items-center border border-black border-b-white pb-3">
-              <div className="w-[5vh] h-[5vh] mr-3 bg-white rounded-full "></div>
+              <img
+                src={
+                  isLoggedIn
+                    ? userInfo.userPhoto
+                    : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+                }
+                className="w-[5vh] h-[5vh] mr-3 rounded-full"
+              />
               {isLoggedIn ? (
-                <div className="text-white">{userInfo.userName} 님</div>
+                <div className="text-white">
+                  {userInfo.userName === null ? (
+                    <div>{`${userInfo.userEmail} 님`}</div>
+                  ) : (
+                    <div>{`${userInfo.userName} 님`}</div>
+                  )}
+                </div>
               ) : (
                 <Link to="/LogIn">
                   <div className="flex items-center text-sm">
@@ -118,9 +128,9 @@ export default function NavBar({ handleScrollView, navName }) {
           </div>
         </div>
       </div>
-      <div className="p-3 flex justify-between relative">
+      <div className="p-3 flex justify-between maxmd:items-center relative">
         <div className="logo-font text-lg">OurMuseum</div>
-        <div className="invisible md:visible flex">
+        <div className="flex maxmd:hidden">
           <div className={navName === "intro" ? textStyleObserve : textStyle}>
             소개
           </div>
@@ -137,7 +147,7 @@ export default function NavBar({ handleScrollView, navName }) {
           </div>
           {!isLoggedIn && (
             <Link to="/LogIn">
-              <div className="ml-5 px-3 py-1 cursor-pointer text-sm border border-black hover:bg-yellow-600 hover:border-yellow-600">
+              <div className="ml-5 px-3 py-1 cursor-pointer text-sm border border-black w-[100px] text-center hover:bg-yellow-600 hover:border-yellow-600">
                 로그인
               </div>
             </Link>
@@ -146,9 +156,21 @@ export default function NavBar({ handleScrollView, navName }) {
             <div
               onMouseOver={() => tooltipRef.current.classList.remove("hidden")}
               onMouseOut={() => tooltipRef.current.classList.add("hidden")}
-              className="ml-5 px-3 py-1 cursor-pointer text-sm border border-black"
+              className="ml-5 px-3 py-1 cursor-pointer text-sm border border-black w-[100px] text-center"
             >
-              <div>{`${userInfo.userName.substr(0, 6)}...`}님</div>
+              {userInfo.userName === null ? (
+                <div>
+                  {userInfo.userEmail.length > 5
+                    ? `${userInfo.userEmail.substr(0, 5) + "..."}님`
+                    : `${userInfo.userEmail}님`}
+                </div>
+              ) : (
+                <div>
+                  {userInfo.userName.length > 5
+                    ? `${userInfo.userName.substr(0, 5) + "..."}님`
+                    : `${userInfo.userName}님`}
+                </div>
+              )}
               <div ref={tooltipRef} className="z-[2] hidden">
                 <Link to="/userPage">
                   <div className="mt-1 hover:text-yellow-600">마이페이지</div>
