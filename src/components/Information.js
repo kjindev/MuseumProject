@@ -13,7 +13,7 @@ export default function Information() {
     setTimeout(textChange, 800);
   };
   return (
-    <div className="h-[30vh] bg-black text-white text-sm flex-col flex md:flex-row justify-center items-center hover:cursor-pointer">
+    <div className="h-[30vh] bg-black text-white text-xs flex-col flex md:flex-row justify-center items-center hover:cursor-pointer">
       <div className="flex flex-row md:flex-col justify-center items-center w-[100%] md:w-[20%]">
         <AiOutlineMail size={22} className="m-3" />
         <div

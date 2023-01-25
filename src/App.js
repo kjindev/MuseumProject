@@ -1,12 +1,13 @@
+import React, { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import Home from "./Home";
 import LogIn from "./LogIn";
 import UserPage from "./UserPage";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { logIn, logOut } from "./authSlice";
 import { userEmailUpdate, userNameUpdate, userPhotoUpdate } from "./userSlice";
-import { useEffect } from "react";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useQuery } from "react-query";
 
 function App() {
   const dispatch = useDispatch();
@@ -32,6 +33,14 @@ function App() {
       }
     });
   });
+
+  const query = useQuery("museum", async () =>
+    (
+      await fetch(
+        `http://openapi.seoul.go.kr:8088/${process.env.REACT_APP_API_KEY}/json/ListExhibitionOfSeoulMOAInfo/1/50/`
+      )
+    ).json()
+  );
 
   return (
     <Routes>

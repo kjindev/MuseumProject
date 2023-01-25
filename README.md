@@ -4,15 +4,15 @@
 
 ### Stacks
 
-<img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=white"/><img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"/><img src="https://img.shields.io/badge/Redux-764ABC?style=for-the-badge&logo=Redux&logoColor=white"/><img src="https://img.shields.io/badge/Firebase CSS-FFCA28?style=for-the-badge&logo=Firebase CSS&logoColor=white"/><img src="https://img.shields.io/badge/Tailwind CSS-06B6D4?style=for-the-badge&logo=Tailwind CSS&logoColor=white"/>
+<img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=JavaScript&logoColor=white"/> <img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=React&logoColor=white"/> <img src="https://img.shields.io/badge/React Query-FF4154?style=flat-square&logo=React Query&logoColor=white"/> <img src="https://img.shields.io/badge/Redux-764ABC?style=flat-square&logo=Redux&logoColor=white"/> <img src="https://img.shields.io/badge/Firebase-FFCA28?style=flat-square&logo=Firebase&logoColor=white"/> <img src="https://img.shields.io/badge/Tailwind CSS-06B6D4?style=flat-square&logo=Tailwind CSS&logoColor=white"/>
 
 ### Goals
 
 - React를 이용한 웹페이지 개발
-- Redux-toolkit을 통한 상태관리
-- Firebase를 이용하여 로그인 및 CRUD 구현
-- Tailwind CSS로 쉽고 빠른 CSS 표현
-- API 요청 관리
+- React-Query로 API 요청 관리
+- Redux-toolkit으로 상태 관리
+- Firebase를 이용한 로그인 및 CRUD 구현
+- Tailwind CSS를 이용한 반응형 웹페이지 구현
 
 ### Features
 

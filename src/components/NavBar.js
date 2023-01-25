@@ -128,8 +128,8 @@ export default function NavBar({ handleScrollView, navName }) {
           </div>
         </div>
       </div>
-      <div className="p-3 flex justify-between maxmd:items-center relative">
-        <div className="logo-font text-lg">OurMuseum</div>
+      <div className="p-3 flex justify-between maxmd:items-center">
+        <div className="px-2 logo-font">OurMuseum</div>
         <div className="flex maxmd:hidden">
           <div className={navName === "intro" ? textStyleObserve : textStyle}>
             소개
