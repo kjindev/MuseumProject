@@ -1,18 +1,42 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Home from "./Home";
 import LogIn from "./LogIn";
 import UserPage from "./UserPage";
+import NowDetail from "./NowDetail";
 import { useDispatch } from "react-redux";
-import { logIn, logOut } from "./authSlice";
-import { userEmailUpdate, userNameUpdate, userPhotoUpdate } from "./userSlice";
+import { logIn, logOut } from "./store/authSlice";
+import {
+  userEmailUpdate,
+  userNameUpdate,
+  userPhotoUpdate,
+} from "./store/userSlice";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useQuery } from "react-query";
+import { dataNowUpdate, dataPrevUpdate } from "./store/dataSlice";
+import { windowStateUpdate } from "./store/windowSlice";
 
 function App() {
   const dispatch = useDispatch();
   const auth = getAuth();
+  const { path } = useLocation();
+  const [dataNow, setDataNow] = useState([]);
+  const [dataPrev, setDataPrev] = useState([]);
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = ("0" + (date.getMonth() + 1)).slice(-2);
+  const day = ("0" + date.getDate()).slice(-2);
 
+  useEffect(() => {
+    if (typeof window !== undefined) {
+      dispatch(windowStateUpdate());
+    }
+  }, [window]);
+  /*
+  useEffect(() => {
+    sessionStorage.setItem("name", navName);
+  }, [path]);
+*/
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -32,9 +56,9 @@ function App() {
         dispatch(logOut());
       }
     });
-  });
+  }, []);
 
-  const query = useQuery("museum", async () =>
+  const { status, data } = useQuery("museum", async () =>
     (
       await fetch(
         `http://openapi.seoul.go.kr:8088/${process.env.REACT_APP_API_KEY}/json/ListExhibitionOfSeoulMOAInfo/1/50/`
@@ -42,11 +66,26 @@ function App() {
     ).json()
   );
 
+  useEffect(() => {
+    if (status === "success" && dataNow.length === 0) {
+      const museumData = data.ListExhibitionOfSeoulMOAInfo.row;
+      const str = /[<pdir="ltr">ns<br><strong></p>&lt;&gt;]/gi;
+      for (let i = 0; i < museumData.length; i++) {
+        // museumData[i].DP_INFO = museumData[i].DP_INFO.replace(str, "");
+        if (museumData[i].DP_END >= `${year}-${month}-${day}`) {
+          dataNow.push(museumData[i]);
+        }
+      }
+      dispatch(dataNowUpdate(dataNow));
+    }
+  }, [status]);
+
   return (
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/LogIn" element={<LogIn />} />
       <Route path="/UserPage" element={<UserPage />} />
+      <Route path="/NowDetail/:index" element={<NowDetail />} />
     </Routes>
   );
 }

@@ -12,6 +12,14 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&display=swap");
 
+@font-face {
+  font-family: "HSBombaram";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/HSBombaram.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
 html,
 body {
   font-family: "Pretendard-Regular";
@@ -21,6 +29,10 @@ body {
 
 .logo-font {
   font-family: "Playfair Display", serif;
+}
+
+.title-font {
+  font-family: "HSBombaram";
 }
 
 .menu-moving {

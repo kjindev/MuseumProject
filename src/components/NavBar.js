@@ -4,12 +4,15 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { getAuth, signOut } from "firebase/auth";
 
-export default function NavBar({ handleScrollView, navName }) {
+export default function NavBar({ handleScrollView }) {
   const isLoggedIn = useSelector((state) => {
     return state.auth.logInState;
   });
   const userInfo = useSelector((state) => {
     return state.userInformation;
+  });
+  const navName = useSelector((state) => {
+    return state.data.navNameState;
   });
 
   const textStyle = "ml-5 py-1 cursor-pointer text-sm maxmd:hidden";

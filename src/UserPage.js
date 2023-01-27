@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AiFillEdit } from "react-icons/ai";
 import { BsChevronLeft, BsX } from "react-icons/bs";
 import { Link } from "react-router-dom";
-import { userNameUpdate, userPhotoUpdate } from "./userSlice";
+import { userNameUpdate, userPhotoUpdate } from "./store/userSlice";
 import { getAuth, updateProfile } from "firebase/auth";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 

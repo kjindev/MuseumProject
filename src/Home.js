@@ -5,11 +5,21 @@ import Prev from "./components/Prev";
 import Location from "./components/Location";
 import Information from "./components/Information";
 import NavBar from "./components/NavBar";
+import { useDispatch, useSelector } from "react-redux";
+import { navNameUpdate } from "./store/dataSlice";
 
 export default function Home() {
   const scrollRef = useRef([]);
-  const [navName, setNavName] = useState("intro");
-  const [isWindow, setIsWindow] = useState(false);
+  const dispatch = useDispatch();
+  const isWindow = useSelector((state) => {
+    return state.setWindow.windowState;
+  });
+
+  useEffect(() => {
+    if (isWindow) {
+      window.scroll(0, sessionStorage.y);
+    }
+  }, []);
 
   const handleScrollView = (event) => {
     const name = event.target.innerText;
@@ -33,16 +43,10 @@ export default function Home() {
   const callback = (entries, observer) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        setNavName(entry.target.id);
+        dispatch(navNameUpdate(entry.target.id));
       }
     });
   };
-
-  useEffect(() => {
-    if (typeof window !== undefined) {
-      setIsWindow(true);
-    }
-  }, [isWindow]);
 
   const observer = new IntersectionObserver(callback, options);
 
@@ -57,8 +61,12 @@ export default function Home() {
   }
 
   return (
-    <div>
-      <NavBar handleScrollView={handleScrollView} navName={navName} />
+    <div
+      onClick={() => {
+        sessionStorage.setItem("y", window.pageYOffset);
+      }}
+    >
+      <NavBar handleScrollView={handleScrollView} />
       <div ref={(el) => (scrollRef.current[0] = el)} id="intro">
         <Intro />
       </div>
