@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import {
@@ -6,51 +6,65 @@ import {
   BsBookmarkPlus,
   BsFillBookmarkCheckFill,
 } from "react-icons/bs";
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import {
+  collection,
+  setDoc,
+  doc,
+  deleteDoc,
+  getDocs,
+} from "firebase/firestore";
 import { db } from "./fbase";
 
 export default function NowDetail() {
   const dataNow = useSelector((state) => {
     return state.data.dataNowState;
   });
+  const userEmail = useSelector((state) => {
+    return state.userInformation.userEmail;
+  });
   const { index } = useParams();
-
   const [bookMark, setBookMark] = useState(false);
 
-  useEffect(() => {
-    if (bookMark) {
-      console.log(index);
-    }
-  }, [bookMark]);
-
-  const addDatabase = () => {
+  const addDatabase = async () => {
     try {
-      addDoc(collection(db, "data"), {
-        name: dataNow[index].DP_NAME,
-        place: dataNow[index].DP_PLACE,
-        link: dataNow[index].DP_LNK,
-        img: dataNow[index].DP_MAIN_IMG,
-      });
-      console.log("ok");
-    } catch (e) {
-      console.error("Error adding document: ", e);
+      setDoc(
+        doc(db, "data", userEmail, "arts", dataNow[index].DP_SEQ),
+        {
+          name: dataNow[index].DP_NAME,
+          place: dataNow[index].DP_PLACE,
+          artist: dataNow[index].DP_ARTIST,
+          date: dataNow[index].DP_END,
+          img: dataNow[index].DP_MAIN_IMG,
+          link: dataNow[index].DP_LNK,
+        },
+        { merge: false }
+      );
+      setBookMark(true);
+    } catch (error) {
+      console.log(error);
     }
   };
 
-  const getDatabase = async () => {
+  const test = () => {
+    const q = getDocs(collection(db, "data", userEmail, "arts"));
+    q.forEach((doc) => {
+      console.log(`${doc.id} => ${doc.data()}`);
+    });
+  };
+
+  const deleteDatabase = () => {
+    setBookMark(false);
     try {
-      const querySnapshot = await getDocs(collection(db, "data"));
-      querySnapshot.forEach((doc) => {
-        console.log(doc.data());
-      });
-    } catch (e) {
-      console.error("Error adding document: ", e);
+      deleteDoc(doc(db, "data", userEmail, "arts", dataNow[index].DP_SEQ));
+      setBookMark(false);
+      console.log("delete");
+    } catch (error) {
+      console.log(error);
     }
   };
 
   return (
     <div className="w-[100%]">
-      <button onClick={getDatabase}>database</button>
       <div className="p-5 fixed">
         <Link to="/">
           <BsChevronLeft />
@@ -69,21 +83,24 @@ export default function NowDetail() {
               <div className="title-font font-bold text-2xl mr-2">
                 {dataNow[index].DP_NAME}
               </div>
-              {bookMark ? (
-                <BsFillBookmarkCheckFill
-                  size={22}
-                  color="#ca8a04"
-                  className="hover:cursor-pointer"
-
-                  // onClick={() => setBookMark(false)}
-                />
-              ) : (
-                <BsBookmarkPlus
-                  size={22}
-                  className="hover:cursor-pointer"
-                  onClick={addDatabase}
-                  // onClick={() => setBookMark(true)}
-                />
+              <button onClick={test}>test</button>
+              {userEmail && (
+                <div>
+                  {bookMark ? (
+                    <BsFillBookmarkCheckFill
+                      size={22}
+                      color="#ca8a04"
+                      className="hover:cursor-pointer"
+                      onClick={deleteDatabase}
+                    />
+                  ) : (
+                    <BsBookmarkPlus
+                      size={22}
+                      className="hover:cursor-pointer"
+                      onClick={addDatabase}
+                    />
+                  )}
+                </div>
               )}
             </div>
             <div className="text-sm">
@@ -97,7 +114,6 @@ export default function NowDetail() {
                   target="_blank"
                   className="italic text-gray-500 hover:text-yellow-600"
                 >
-                  {" "}
                   홈페이지 바로가기
                 </a>
               </div>

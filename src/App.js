@@ -7,6 +7,7 @@ import NowDetail from "./NowDetail";
 import { useDispatch } from "react-redux";
 import { logIn, logOut } from "./store/authSlice";
 import {
+  userIDUpdate,
   userEmailUpdate,
   userNameUpdate,
   userPhotoUpdate,
@@ -32,15 +33,12 @@ function App() {
       dispatch(windowStateUpdate());
     }
   }, [window]);
-  /*
-  useEffect(() => {
-    sessionStorage.setItem("name", navName);
-  }, [path]);
-*/
+
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         dispatch(logIn());
+        dispatch(userIDUpdate(user.uid));
         dispatch(userEmailUpdate(user.email));
         dispatch(userNameUpdate(user.displayName));
         if (user.photoURL === null) {
