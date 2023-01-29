@@ -1,7 +1,8 @@
 import React, { useRef, useState } from "react";
+import { AiOutlineHome } from "react-icons/ai";
 import { BsList, BsX, BsChevronRight } from "react-icons/bs";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { getAuth, signOut } from "firebase/auth";
 
 export default function NavBar({ handleScrollView }) {
@@ -27,7 +28,7 @@ export default function NavBar({ handleScrollView }) {
   const tooltipRef = useRef();
 
   const [menuVisible, setMenuVisible] = useState();
-
+  const { pathname } = useLocation();
   const handleLogOut = () => {
     try {
       const auth = getAuth();
@@ -103,51 +104,78 @@ export default function NavBar({ handleScrollView }) {
               )}
             </div>
           </div>
-          <div
-            className={
-              navName === "intro" ? menuTextStyleObserve : menuTextStyle
-            }
-          >
-            소개
-          </div>
-          <div
-            className={navName === "now" ? menuTextStyleObserve : menuTextStyle}
-          >
-            현재 전시
-          </div>
-          <div
-            className={
-              navName === "prev" ? menuTextStyleObserve : menuTextStyle
-            }
-          >
-            지난 전시
-          </div>
-          <div
-            className={
-              navName === "location" ? menuTextStyleObserve : menuTextStyle
-            }
-          >
-            방문하기
-          </div>
+          {pathname === "/" ? (
+            <>
+              <div
+                className={
+                  navName === "intro" ? menuTextStyleObserve : menuTextStyle
+                }
+              >
+                소개
+              </div>
+              <div
+                className={
+                  navName === "now" ? menuTextStyleObserve : menuTextStyle
+                }
+              >
+                현재 전시
+              </div>
+              <div
+                className={
+                  navName === "prev" ? menuTextStyleObserve : menuTextStyle
+                }
+              >
+                지난 전시
+              </div>
+              <div
+                className={
+                  navName === "location" ? menuTextStyleObserve : menuTextStyle
+                }
+              >
+                방문하기
+              </div>
+            </>
+          ) : (
+            <div className="py-1"></div>
+          )}
         </div>
       </div>
-      <div className="p-3 flex justify-between maxmd:items-center">
-        <div className="px-2 logo-font">OurMuseum</div>
+      <div className="p-3 mx-2 flex justify-between maxmd:items-center">
+        {pathname === "/" ? (
+          <div className="px-2 logo-font">OurMuseum</div>
+        ) : (
+          <Link to="/">
+            <AiOutlineHome size={25} />
+          </Link>
+        )}
         <div className="flex maxmd:hidden">
-          <div className={navName === "intro" ? textStyleObserve : textStyle}>
-            소개
-          </div>
-          <div className={navName === "now" ? textStyleObserve : textStyle}>
-            현재 전시
-          </div>
-          <div className={navName === "prev" ? textStyleObserve : textStyle}>
-            지난 전시
-          </div>
-          <div
-            className={navName === "location" ? textStyleObserve : textStyle}
-          >
-            방문하기
-          </div>
+          {pathname === "/" ? (
+            <>
+              {" "}
+              <div
+                className={navName === "intro" ? textStyleObserve : textStyle}
+              >
+                소개
+              </div>
+              <div className={navName === "now" ? textStyleObserve : textStyle}>
+                현재 전시
+              </div>
+              <div
+                className={navName === "prev" ? textStyleObserve : textStyle}
+              >
+                지난 전시
+              </div>
+              <div
+                className={
+                  navName === "location" ? textStyleObserve : textStyle
+                }
+              >
+                방문하기
+              </div>
+            </>
+          ) : (
+            <div className="px-2 py-1"></div>
+          )}
           {!isLoggedIn && (
             <Link to="/LogIn">
               <div className="ml-5 px-3 py-1 cursor-pointer text-sm border border-black w-[100px] text-center hover:bg-yellow-600 hover:border-yellow-600">
@@ -159,7 +187,7 @@ export default function NavBar({ handleScrollView }) {
             <div
               onMouseOver={() => tooltipRef.current.classList.remove("hidden")}
               onMouseOut={() => tooltipRef.current.classList.add("hidden")}
-              className="ml-5 px-3 py-1 cursor-pointer text-sm border border-black w-[100px] text-center"
+              className="ml-5 px-3 py-1 cursor-pointer text-sm border border-black bg-white w-[100px] text-center"
             >
               {userInfo.userName === null ? (
                 <div>

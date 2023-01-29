@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import {
@@ -7,10 +7,12 @@ import {
   BsFillBookmarkCheckFill,
 } from "react-icons/bs";
 import {
-  collection,
   setDoc,
   doc,
   deleteDoc,
+  collection,
+  query,
+  where,
   getDocs,
 } from "firebase/firestore";
 import { db } from "./fbase";
@@ -22,42 +24,46 @@ export default function NowDetail() {
   const userEmail = useSelector((state) => {
     return state.userInformation.userEmail;
   });
+
   const { index } = useParams();
-  const [bookMark, setBookMark] = useState(false);
+  const [bookMark, setBookMark] = useState();
 
   const addDatabase = async () => {
     try {
-      setDoc(
-        doc(db, "data", userEmail, "arts", dataNow[index].DP_SEQ),
-        {
-          name: dataNow[index].DP_NAME,
-          place: dataNow[index].DP_PLACE,
-          artist: dataNow[index].DP_ARTIST,
-          date: dataNow[index].DP_END,
-          img: dataNow[index].DP_MAIN_IMG,
-          link: dataNow[index].DP_LNK,
-        },
-        { merge: false }
-      );
+      setDoc(doc(db, "data", userEmail, "arts", dataNow[index].DP_SEQ), {
+        name: dataNow[index].DP_NAME,
+        place: dataNow[index].DP_PLACE,
+        artist: dataNow[index].DP_ARTIST,
+        end: dataNow[index].DP_END,
+        img: dataNow[index].DP_MAIN_IMG,
+        link: dataNow[index].DP_LNK,
+      });
       setBookMark(true);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const test = () => {
-    const q = getDocs(collection(db, "data", userEmail, "arts"));
-    q.forEach((doc) => {
-      console.log(`${doc.id} => ${doc.data()}`);
-    });
-  };
+  useEffect(() => {
+    const getDatabase = async () => {
+      if (userEmail) {
+        const q = query(
+          collection(db, "data", userEmail, "arts"),
+          where("name", "==", dataNow[index].DP_NAME)
+        );
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach(() => {
+          setBookMark(true);
+        });
+      }
+    };
+    getDatabase();
+  }, [bookMark]);
 
   const deleteDatabase = () => {
-    setBookMark(false);
     try {
       deleteDoc(doc(db, "data", userEmail, "arts", dataNow[index].DP_SEQ));
       setBookMark(false);
-      console.log("delete");
     } catch (error) {
       console.log(error);
     }
@@ -65,11 +71,6 @@ export default function NowDetail() {
 
   return (
     <div className="w-[100%]">
-      <div className="p-5 fixed">
-        <Link to="/">
-          <BsChevronLeft />
-        </Link>
-      </div>
       {dataNow === undefined ? (
         <div>Loading...</div>
       ) : (
@@ -83,7 +84,6 @@ export default function NowDetail() {
               <div className="title-font font-bold text-2xl mr-2">
                 {dataNow[index].DP_NAME}
               </div>
-              <button onClick={test}>test</button>
               {userEmail && (
                 <div>
                   {bookMark ? (

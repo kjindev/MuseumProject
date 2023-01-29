@@ -4,6 +4,8 @@ import Home from "./Home";
 import LogIn from "./LogIn";
 import UserPage from "./UserPage";
 import NowDetail from "./NowDetail";
+import PrevDetail from "./PrevDetail";
+import Map from "./Map";
 import { useDispatch } from "react-redux";
 import { logIn, logOut } from "./store/authSlice";
 import {
@@ -16,6 +18,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useQuery } from "react-query";
 import { dataNowUpdate, dataPrevUpdate } from "./store/dataSlice";
 import { windowStateUpdate } from "./store/windowSlice";
+import NavBar from "./components/NavBar";
 
 function App() {
   const dispatch = useDispatch();
@@ -59,7 +62,7 @@ function App() {
   const { status, data } = useQuery("museum", async () =>
     (
       await fetch(
-        `http://openapi.seoul.go.kr:8088/${process.env.REACT_APP_API_KEY}/json/ListExhibitionOfSeoulMOAInfo/1/50/`
+        `http://openapi.seoul.go.kr:8088/${process.env.REACT_APP_API_KEY}/json/ListExhibitionOfSeoulMOAInfo/1/100/`
       )
     ).json()
   );
@@ -67,24 +70,33 @@ function App() {
   useEffect(() => {
     if (status === "success" && dataNow.length === 0) {
       const museumData = data.ListExhibitionOfSeoulMOAInfo.row;
+      const museumDataCopy = museumData.map((item) => item);
       const str = /[<pdir="ltr">ns<br><strong></p>&lt;&gt;]/gi;
       for (let i = 0; i < museumData.length; i++) {
-        // museumData[i].DP_INFO = museumData[i].DP_INFO.replace(str, "");
-        if (museumData[i].DP_END >= `${year}-${month}-${day}`) {
-          dataNow.push(museumData[i]);
+        museumDataCopy[i].DP_INFO = museumDataCopy[i].DP_INFO.replace(str, "");
+        if (museumDataCopy[i].DP_END >= `${year}-${month}-${day}`) {
+          dataNow.push(museumDataCopy[i]);
+        } else if (museumDataCopy[i].DP_END < `${year}-${month}-${day}`) {
+          dataPrev.push(museumDataCopy[i]);
         }
       }
       dispatch(dataNowUpdate(dataNow));
+      dispatch(dataPrevUpdate(dataPrev));
     }
   }, [status]);
 
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/LogIn" element={<LogIn />} />
-      <Route path="/UserPage" element={<UserPage />} />
-      <Route path="/NowDetail/:index" element={<NowDetail />} />
-    </Routes>
+    <>
+      <NavBar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/LogIn" element={<LogIn />} />
+        <Route path="/UserPage" element={<UserPage />} />
+        <Route path="/NowDetail/:index" element={<NowDetail />} />
+        <Route path="/PrevDetail" element={<PrevDetail />} />
+        <Route path="/Map/:index" element={<Map />} />
+      </Routes>
+    </>
   );
 }
 

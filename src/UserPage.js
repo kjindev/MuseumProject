@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AiFillEdit } from "react-icons/ai";
 import { BsChevronLeft, BsX } from "react-icons/bs";
@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 import { userNameUpdate, userPhotoUpdate } from "./store/userSlice";
 import { getAuth, updateProfile } from "firebase/auth";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { collection, query, onSnapshot } from "firebase/firestore";
+import { db } from "./fbase";
 
 export default function UserPage() {
   const userInfo = useSelector((state) => {
@@ -15,6 +17,34 @@ export default function UserPage() {
   const modalRef = useRef();
   const [userNameChanged, setUserNameChanged] = useState();
   const fileInputRef = useRef();
+  let arts = [];
+  let museum = [];
+  const [artList, setArtList] = useState([]);
+  const [museumList, setMuseumList] = useState([]);
+  useEffect(() => {
+    if (userInfo.userEmail) {
+      const artQuery = query(
+        collection(db, "data", userInfo.userEmail, "arts")
+      );
+      onSnapshot(artQuery, (querySnapshot) => {
+        arts = [];
+        querySnapshot.forEach((doc) => {
+          arts.push(doc.data());
+        });
+        setArtList(arts);
+      });
+      const museumQuery = query(
+        collection(db, "data", userInfo.userEmail, "museum")
+      );
+      onSnapshot(museumQuery, (querySnapshot) => {
+        museum = [];
+        querySnapshot.forEach((doc) => {
+          museum.push(doc.data());
+        });
+        setMuseumList(museum);
+      });
+    }
+  }, []);
 
   const handleProfileEdit = () => {
     modalRef.current.classList.remove("hidden");
@@ -53,11 +83,6 @@ export default function UserPage() {
 
   return (
     <div>
-      <div className="p-5 fixed">
-        <Link to="/">
-          <BsChevronLeft />
-        </Link>
-      </div>
       <div ref={modalRef} className="hidden fixed w-[100%] h-[100vh]  z-[1]">
         <div className="flex items-center justify-center bg-black w-[100%] h-[100%]">
           <div className="w-[420px] h-[420px] bg-white flex flex-col">
@@ -126,8 +151,18 @@ export default function UserPage() {
           )}
         </div>
         <div className="flex flex-col lg:flex-row justify-center items-center w-[70%] h-[70vh] ">
-          <div className="w-[90%] h-[50%] lg:w-[50%] lg:h-[100%] m-3 bg-gray-50 drop-shadow-md"></div>
-          <div className="w-[90%] h-[50%] lg:w-[50%] lg:h-[100%] m-3 bg-gray-50 drop-shadow-md"></div>
+          <div className="w-[90%] md:h-[50%] lg:w-[50%] lg:h-[100%] my-2 p-3 bg-gray-50 drop-shadow-md">
+            <div>| 보고 싶은 전시</div>
+            {artList.map((item, index) => (
+              <div key={index}>{item.name}</div>
+            ))}
+          </div>
+          <div className="w-[90%] h-[50%] lg:w-[50%] lg:h-[100%] my-2 p-3 bg-gray-50 drop-shadow-md">
+            <div>| 가고 싶은 미술관</div>
+            {museumList.map((item, index) => (
+              <div key={index}>{item.name}</div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

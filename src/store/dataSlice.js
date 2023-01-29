@@ -7,6 +7,7 @@ const dataSlice = createSlice({
     dataPrevState: undefined,
     navNameState: "intro",
     slideIndexState: 0,
+    bookMark: false,
   },
   reducers: {
     dataNowUpdate: (state, action) => {
@@ -21,6 +22,9 @@ const dataSlice = createSlice({
     slideIndexUpdate: (state, action) => {
       state.slideIndexState = action.payload;
     },
+    bookMarkUpdate: (state) => {
+      state.bookMarkState = !state.bookMarkState;
+    },
   },
 });
 
@@ -30,4 +34,5 @@ export const {
   dataPrevUpdate,
   navNameUpdate,
   slideIndexUpdate,
+  bookMarkUpdate,
 } = dataSlice.actions;
