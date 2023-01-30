@@ -1,19 +1,107 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { BiSearch, BiX } from "react-icons/bi";
-
+import { BsBookmarkPlus, BsFillBookmarkCheckFill } from "react-icons/bs";
+import {
+  setDoc,
+  doc,
+  deleteDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
+import { db } from "./fbase";
 export default function PrevDetail() {
   const dataPrev = useSelector((state) => {
     return state.data.dataPrevState;
   });
+  const isWindow = useSelector((state) => {
+    return state.setWindow.windowState;
+  });
+  const userEmail = useSelector((state) => {
+    return state.userInformation.userEmail;
+  });
+
   const [searchText, setSearchText] = useState("");
-  const dataRef = useRef([]);
+  const [modalText, setModalText] = useState([]);
+  const [modalTextInfo, setModalTextInfo] = useState();
+  const [bookMark, setBookMark] = useState();
+
+  const dataRef = useRef();
+  const listRef = useRef([]);
+  const modalRef = useRef();
+
   useLayoutEffect(() => {
     window.scroll(0, 0);
   }, []);
+
+  const handleModal = (event) => {
+    if (event.target.parentElement.dataset.name !== undefined) {
+      setModalText([
+        event.target.parentElement.dataset.name,
+        event.target.parentElement.dataset.artist,
+        event.target.parentElement.dataset.img,
+        event.target.parentElement.dataset.place,
+        event.target.parentElement.dataset.start,
+        event.target.parentElement.dataset.end,
+        event.target.parentElement.dataset.link,
+        event.target.parentElement.dataset.id,
+      ]);
+      if (event.target.parentElement.dataset.info.length > 400) {
+        setModalTextInfo(
+          event.target.parentElement.dataset.info.substr(0, 400) + "..."
+        );
+      } else {
+        setModalTextInfo(event.target.parentElement.dataset.info + ` `);
+      }
+      modalRef.current.classList.remove("hidden");
+    }
+  };
+
+  const handleModalCloseBtn = () => {
+    modalRef.current.classList.add("hidden");
+  };
+
+  useEffect(() => {
+    if (dataPrev) {
+      for (let i = 0; i < 12; i++) {
+        listRef.current[i].classList.remove("hidden");
+        listRef.current[i].classList.add("flex");
+      }
+    }
+  }, [dataPrev]);
+
+  const options = { threshold: 0.9 };
+  const callback = (entries, observer) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        let num = parseInt(entry.target.dataset.index);
+        if ((num + 1) % 12 === 0) {
+          for (let i = num + 1; i < num + 13; i++) {
+            listRef.current[i].classList.remove("hidden");
+            listRef.current[i].classList.add("flex");
+          }
+        }
+      }
+    });
+  };
+  const observer = new IntersectionObserver(callback, options);
+
+  const handleScroll = () => {
+    if (listRef.current[0] !== null) {
+      listRef.current.forEach((el) => observer.observe(el));
+    }
+  };
+
+  if (isWindow) {
+    window.addEventListener("scroll", handleScroll);
+  }
+
   const handleTextChange = (event) => {
     setSearchText(event.target.value);
   };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     for (let i = 0; i < dataPrev.length; i++) {
@@ -30,8 +118,104 @@ export default function PrevDetail() {
       }
     }
   };
+
+  const addDatabase = async () => {
+    try {
+      setDoc(doc(db, "data", userEmail, "arts", modalText[7]), {
+        name: modalText[0],
+        place: modalText[3],
+        artist: modalText[1],
+        end: modalText[5],
+        img: modalText[2],
+        link: modalText[6],
+      });
+      setBookMark(true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const deleteDatabase = () => {
+    try {
+      deleteDoc(doc(db, "data", userEmail, "arts", modalText[7]));
+      setBookMark(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="w-[100%]">
+      <div
+        ref={modalRef}
+        className="z-[2] hidden fixed bg-black w-[100%] h-[100vh] opacity-90"
+      >
+        <BiX
+          color="white"
+          size={30}
+          className="hover:cursor-pointer"
+          onClick={handleModalCloseBtn}
+        />
+        <div className="p-3">
+          <div className="mb-5">
+            <div className="flex items-center">
+              <div className="z-[2] mr-2 text-lg text-yellow-600 lg:text-4xl mb-1">
+                {modalText[0]}
+              </div>
+              {userEmail && (
+                <div>
+                  {bookMark ? (
+                    <BsFillBookmarkCheckFill
+                      size={22}
+                      color="#ca8a04"
+                      className="hover:cursor-pointer z-[2]"
+                      onClick={deleteDatabase}
+                    />
+                  ) : (
+                    <BsBookmarkPlus
+                      size={22}
+                      color="white"
+                      className="hover:cursor-pointer z-[2]"
+                      onClick={addDatabase}
+                    />
+                  )}
+                </div>
+              )}
+            </div>
+            {modalText[1] && (
+              <div className="z-[2] text-white text-xs lg:text-base">
+                | {modalText[1]}
+              </div>
+            )}
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="z-[2] text-xs text-white">
+                전시 장소 | {modalText[3]}
+              </div>
+              <div className="z-[2] text-xs text-white ">
+                전시 기간 | {modalText[4]} ~ {modalText[5]}
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-wrap-reverse justify-center text-xs lg:flex-row lg:mt-5 lg:mr-10">
+            <div className="z-[2] text-white lg:mt-5 text-justify">
+              {modalTextInfo}
+              <a
+                href={modalText[6]}
+                target="_blank"
+                className="italic text-gray-500 hover:text-indigo-500"
+              >
+                더보기
+              </a>
+            </div>
+            <img
+              src={modalText[2]}
+              className="h-[200px] z-[2] lg:mt-5 lg:ml-6 p-2"
+            />
+          </div>
+        </div>
+      </div>
       <div className="px-[10%] pt-[10vh]">
         <div className="text-3xl lg:text-5xl">| 지난 전시</div>
         <div className="flex justify-between items-center">
@@ -56,9 +240,13 @@ export default function PrevDetail() {
         {dataPrev &&
           dataPrev.map((item, index) => (
             <div
+              onClick={handleModal}
+              ref={(el) => (listRef.current[index] = el)}
               key={index}
+              data-index={index}
               data-name={item.DP_NAME}
               data-artist={item.DP_ARTIST}
+              data-id={item.DP_SEQ}
               data-img={item.DP_MAIN_IMG}
               data-place={item.DP_PLACE}
               data-start={item.DP_START}
@@ -67,7 +255,7 @@ export default function PrevDetail() {
               data-artcnt={item.DP_ART_CNT}
               data-info={item.DP_INFO}
               data-link={item.DP_LNK}
-              className="w-[43%] text-xs m-2 lg:w-[23%] lg:h-[100%] flex flex-col hover:cursor-pointer hover:scale-105 duration-100 drop-shadow-lg"
+              className="hidden w-[43%] text-xs m-2 lg:w-[23%] lg:h-[100%] flex-col hover:cursor-pointer hover:scale-105 duration-100 drop-shadow-lg"
             >
               <img
                 src={item.DP_MAIN_IMG}

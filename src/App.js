@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Home from "./Home";
 import LogIn from "./LogIn";
 import UserPage from "./UserPage";
@@ -23,7 +23,6 @@ import NavBar from "./components/NavBar";
 function App() {
   const dispatch = useDispatch();
   const auth = getAuth();
-  const { path } = useLocation();
   const [dataNow, setDataNow] = useState([]);
   const [dataPrev, setDataPrev] = useState([]);
   const date = new Date();

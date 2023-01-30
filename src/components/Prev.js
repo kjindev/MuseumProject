@@ -1,5 +1,6 @@
 import React from "react";
 import { useQueryClient } from "react-query";
+import { Link } from "react-router-dom";
 
 export default function Prev() {
   const queryClient = useQueryClient();
@@ -24,6 +25,7 @@ export default function Prev() {
     <div className="h-[100vh] flex items-center justify-center">
       <div className="text-center text-xl sm:text-3xl md:text-5xl lg:text-7xl">
         지난 전시
+        <Link to="/PrevDetail">자세히 보기</Link>
       </div>
     </div>
   );

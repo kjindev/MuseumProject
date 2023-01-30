@@ -34,7 +34,7 @@ export default function Now() {
       {dataNow !== undefined ? (
         <div className="h-[80vh]">
           <div className="text-center text-4xl">현재전시</div>
-          <div className="flex w-[700%] h-[100%]">
+          <div className="flex w-[600%] h-[100%]">
             {dataNow.map((item, index) => (
               <div
                 key={index}
