@@ -2,35 +2,28 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { BiSearch, BiX } from "react-icons/bi";
 import { BsBookmarkPlus, BsFillBookmarkCheckFill } from "react-icons/bs";
-import {
-  setDoc,
-  doc,
-  deleteDoc,
-  collection,
-  query,
-  where,
-  getDocs,
-} from "firebase/firestore";
+import { setDoc, doc, deleteDoc } from "firebase/firestore";
 import { db } from "./fbase";
+
 export default function PrevDetail() {
   const dataPrev = useSelector((state) => {
     return state.data.dataPrevState;
   });
-  const isWindow = useSelector((state) => {
-    return state.setWindow.windowState;
-  });
   const userEmail = useSelector((state) => {
     return state.userInformation.userEmail;
   });
-
   const [searchText, setSearchText] = useState("");
+  const [searching, setSearching] = useState(false);
   const [modalText, setModalText] = useState([]);
   const [modalTextInfo, setModalTextInfo] = useState();
   const [bookMark, setBookMark] = useState();
 
-  const dataRef = useRef();
   const listRef = useRef([]);
   const modalRef = useRef();
+
+  const [totalPage, setTotalPage] = useState();
+  const [pageList, setPageList] = useState([]);
+  const [page, setPage] = useState(1);
 
   useLayoutEffect(() => {
     window.scroll(0, 0);
@@ -59,8 +52,15 @@ export default function PrevDetail() {
     }
   };
 
-  const handleModalCloseBtn = () => {
-    modalRef.current.classList.add("hidden");
+  const handleResetSearching = () => {
+    setSearching(false);
+    for (let i = 0; i < 12; i++) {
+      listRef.current[i].classList.remove("hidden");
+      listRef.current[i].classList.add("flex");
+    }
+    for (let i = 12; i < dataPrev.length; i++) {
+      listRef.current[i].classList.remove("hidden");
+    }
   };
 
   useEffect(() => {
@@ -69,56 +69,78 @@ export default function PrevDetail() {
         listRef.current[i].classList.remove("hidden");
         listRef.current[i].classList.add("flex");
       }
+      setTotalPage(Math.ceil(dataPrev.length / 12));
     }
   }, [dataPrev]);
 
-  const options = { threshold: 0.9 };
-  const callback = (entries, observer) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        let num = parseInt(entry.target.dataset.index);
-        if ((num + 1) % 12 === 0) {
-          for (let i = num + 1; i < num + 13; i++) {
-            listRef.current[i].classList.remove("hidden");
-            listRef.current[i].classList.add("flex");
+  const handlePageList = () => {
+    for (let i = 1; i <= totalPage; i++) {
+      pageList.push(i);
+    }
+    console.log(pageList);
+  };
+
+  useEffect(() => {
+    if (pageList.length !== 0) {
+      for (let i = 0; i < dataPrev.length; i++) {
+        listRef.current[i].classList.add("hidden");
+        listRef.current[i].classList.remove("flex");
+        for (let j = 12 * (page - 1); j < 12 * page; j++) {
+          if (listRef.current[j] !== undefined) {
+            listRef.current[j].classList.remove("hidden");
+            listRef.current[j].classList.add("flex");
           }
         }
       }
-    });
-  };
-  const observer = new IntersectionObserver(callback, options);
-
-  const handleScroll = () => {
-    if (listRef.current[0] !== null) {
-      listRef.current.forEach((el) => observer.observe(el));
     }
-  };
-
-  if (isWindow) {
-    window.addEventListener("scroll", handleScroll);
-  }
-
-  const handleTextChange = (event) => {
-    setSearchText(event.target.value);
-  };
+  }, [pageList, page]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    setPageList([]);
+    handlePageList();
+    let cnt = 0;
     for (let i = 0; i < dataPrev.length; i++) {
-      dataRef.current.children[i].classList.remove("hidden");
+      listRef.current[i].classList.remove("hidden");
       if (
-        dataRef.current.children[i].innerText.includes(searchText) === false &&
-        dataRef.current.children[i].children[2].innerText.includes(
-          searchText
-        ) === false
+        listRef.current[i].innerText.includes(searchText) === false &&
+        listRef.current[i].children[2].innerText.includes(searchText) === false
       ) {
-        dataRef.current.children[i].classList.add("hidden");
-      } else if (searchText === "") {
-        dataRef.current.children[i].classList.remove("hidden");
+        listRef.current[i].classList.add("hidden");
+        cnt = cnt + 1;
       }
     }
+    setTotalPage(Math.ceil((dataPrev.length - cnt) / 12));
   };
+  /*
+  const options = { threshold: 0.9 };
+  const callback = (entries, observer) => {
+    if (searching == false) {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          let num = parseInt(entry.target.dataset.index);
+          if ((num + 1) % 12 === 0) {
+            for (let i = num + 1; i < num + 13; i++) {
+              listRef.current[i].classList.remove("hidden");
+              listRef.current[i].classList.add("flex");
+            }
+          }
+        }
+      });
+    }
+  };
+  const observer = new IntersectionObserver(callback, options);
 
+  if (listRef.current[0] !== null) {
+    if (searching === false) {
+      listRef.current.forEach((el) => observer.observe(el));
+      console.log("false");
+    } else if (searching === true) {
+      listRef.current.forEach((el) => observer.disconnect(el));
+      console.log("true");
+    }
+  }
+*/
   const addDatabase = async () => {
     try {
       setDoc(doc(db, "data", userEmail, "arts", modalText[7]), {
@@ -145,7 +167,7 @@ export default function PrevDetail() {
   };
 
   return (
-    <div className="w-[100%]">
+    <div className="w-[100%] flex flex-col">
       <div
         ref={modalRef}
         className="z-[2] hidden fixed bg-black w-[100%] h-[100vh] opacity-90"
@@ -154,7 +176,7 @@ export default function PrevDetail() {
           color="white"
           size={30}
           className="hover:cursor-pointer"
-          onClick={handleModalCloseBtn}
+          onClick={() => modalRef.current.classList.add("hidden")}
         />
         <div className="p-3">
           <div className="mb-5">
@@ -222,13 +244,16 @@ export default function PrevDetail() {
           <div className="text-sm lg:text-lg">
             서울시립미술관 지난 전시를 확인해보세요
           </div>
+          <div onClick={handleResetSearching} className="hover:cursor-pointer">
+            검색 초기화
+          </div>
           <form
             onSubmit={handleSubmit}
             className="flex justify-end items-center drop-shadow-lg rounded-full px-3 py-2 bg-gray-100"
           >
             <input
               value={searchText || ""}
-              onChange={handleTextChange}
+              onChange={(event) => setSearchText(event.target.value)}
               placeholder="제목, 이름으로 검색"
               className="w-[20vw] text-sm p-1 mr-2 rounded-lg bg-gray-100"
             />
@@ -236,7 +261,7 @@ export default function PrevDetail() {
           </form>
         </div>
       </div>
-      <div ref={dataRef} className="px-[10%] mt-5 flex flex-wrap">
+      <div className="px-[10%] mt-5 flex flex-wrap">
         {dataPrev &&
           dataPrev.map((item, index) => (
             <div
@@ -268,6 +293,19 @@ export default function PrevDetail() {
             </div>
           ))}
       </div>
+      {pageList && (
+        <div className="h-[10vh] flex justify-center">
+          {pageList.map((item, index) => (
+            <div
+              key={index}
+              onClick={(event) => setPage(parseInt(event.target.innerText))}
+              className="hover:cursor-pointer mx-1"
+            >
+              {item}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

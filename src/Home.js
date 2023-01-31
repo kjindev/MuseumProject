@@ -50,14 +50,8 @@ export default function Home() {
 
   const observer = new IntersectionObserver(callback, options);
 
-  const handleScroll = () => {
-    if (scrollRef.current[0] !== null) {
-      scrollRef.current.forEach((el) => observer.observe(el));
-    }
-  };
-
-  if (isWindow) {
-    window.addEventListener("scroll", handleScroll);
+  if (scrollRef.current[0] !== null) {
+    scrollRef.current.forEach((el) => observer.observe(el));
   }
 
   return (
