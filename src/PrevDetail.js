@@ -1,9 +1,10 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { BiSearch, BiX } from "react-icons/bi";
+import { BiSearch, BiX, BiXCircle } from "react-icons/bi";
 import { BsBookmarkPlus, BsFillBookmarkCheckFill } from "react-icons/bs";
 import { setDoc, doc, deleteDoc } from "firebase/firestore";
 import { db } from "./fbase";
+import { useQueryClient } from "react-query";
 
 export default function PrevDetail() {
   const dataPrev = useSelector((state) => {
@@ -12,22 +13,112 @@ export default function PrevDetail() {
   const userEmail = useSelector((state) => {
     return state.userInformation.userEmail;
   });
+  const queryClient = useQueryClient();
+  const { status } = queryClient.getQueryState("museum");
   const [searchText, setSearchText] = useState("");
-  const [searching, setSearching] = useState(false);
   const [modalText, setModalText] = useState([]);
   const [modalTextInfo, setModalTextInfo] = useState();
   const [bookMark, setBookMark] = useState();
 
-  const listRef = useRef([]);
   const modalRef = useRef();
+  const dataRef = useRef();
 
-  const [totalPage, setTotalPage] = useState();
   const [pageList, setPageList] = useState([]);
+  const [searchedData, setSearchedData] = useState([]);
+  const [searching, setSearching] = useState(false);
+  const [totalPage, setTotalPage] = useState();
   const [page, setPage] = useState(1);
+  const [submitCheck, setSubmitCheck] = useState(true);
+
+  useEffect(() => {
+    console.log(typeof dataPrev, dataPrev);
+  }, [dataPrev]);
 
   useLayoutEffect(() => {
     window.scroll(0, 0);
   }, []);
+
+  useEffect(() => {
+    if (status === "success") {
+      if (!searching) {
+        for (let j = 0; j < dataPrev.length; j++) {
+          dataRef.current.children[j].classList.add("hidden");
+          if (page !== totalPage) {
+            for (let i = (page - 1) * 12; i < page * 12; i++) {
+              dataRef.current.children[i].classList.remove("hidden");
+            }
+          } else if (page === totalPage) {
+            for (let i = (page - 1) * 12; i < dataPrev.length; i++) {
+              dataRef.current.children[i].classList.remove("hidden");
+            }
+          }
+        }
+      }
+    }
+  }, [page]);
+
+  useEffect(() => {
+    if (dataPrev) {
+      setTotalPage(Math.ceil(dataPrev.length / 12));
+    }
+  }, [dataPrev]);
+
+  useEffect(() => {
+    let pageItems = [];
+    for (let i = 1; i <= totalPage; i++) {
+      pageItems.push(i);
+    }
+    setPageList(pageItems);
+  }, [totalPage]);
+
+  useEffect(() => {
+    handleSubmit();
+  }, [submitCheck]);
+
+  const handleSubmit = (event) => {
+    if (dataPrev !== undefined) {
+      let cnt = 0;
+      let totalPageNumber = 0;
+      let dataItem = [];
+      let dataItems = [];
+      for (let i = 0; i < dataPrev.length; i++) {
+        if (dataPrev[i].DP_NAME.includes(searchText)) {
+          dataItem.push(dataPrev[i]);
+          cnt = cnt + 1;
+        }
+      }
+      if (cnt === 0) {
+        return setSearchedData(undefined), setTotalPage(Math.ceil(cnt / 12));
+      }
+      totalPageNumber = Math.ceil(cnt / 12);
+      setTotalPage(Math.ceil(cnt / 12));
+      let i = 0;
+      let dataArray = [];
+      while (i < totalPageNumber) {
+        dataItems = [];
+        if (i === totalPageNumber - 1) {
+          for (let j = i * 12; j < cnt; j++) {
+            dataItems.push(dataItem[j]);
+          }
+        } else {
+          for (let j = i * 12; j < (i + 1) * 12; j++) {
+            dataItems.push(dataItem[j]);
+          }
+        }
+        dataArray.push(dataItems);
+        i++;
+      }
+      setSearchedData(dataArray);
+    } else {
+      return [];
+    }
+  };
+
+  const handleResetSeaching = () => {
+    setSearching(false);
+    setSearchText("");
+    setTotalPage(Math.ceil(dataPrev.length / 12));
+  };
 
   const handleModal = (event) => {
     if (event.target.parentElement.dataset.name !== undefined) {
@@ -40,107 +131,19 @@ export default function PrevDetail() {
         event.target.parentElement.dataset.end,
         event.target.parentElement.dataset.link,
         event.target.parentElement.dataset.id,
+        event.target.parentElement.dataset.info,
       ]);
-      if (event.target.parentElement.dataset.info.length > 400) {
+      /*if (event.target.parentElement.dataset.info.length > 400) {
         setModalTextInfo(
           event.target.parentElement.dataset.info.substr(0, 400) + "..."
         );
       } else {
         setModalTextInfo(event.target.parentElement.dataset.info + ` `);
-      }
+      }*/
       modalRef.current.classList.remove("hidden");
     }
   };
 
-  const handleResetSearching = () => {
-    setSearching(false);
-    for (let i = 0; i < 12; i++) {
-      listRef.current[i].classList.remove("hidden");
-      listRef.current[i].classList.add("flex");
-    }
-    for (let i = 12; i < dataPrev.length; i++) {
-      listRef.current[i].classList.remove("hidden");
-    }
-  };
-
-  useEffect(() => {
-    if (dataPrev) {
-      for (let i = 0; i < 12; i++) {
-        listRef.current[i].classList.remove("hidden");
-        listRef.current[i].classList.add("flex");
-      }
-      setTotalPage(Math.ceil(dataPrev.length / 12));
-    }
-  }, [dataPrev]);
-
-  const handlePageList = () => {
-    for (let i = 1; i <= totalPage; i++) {
-      pageList.push(i);
-    }
-    console.log(pageList);
-  };
-
-  useEffect(() => {
-    if (pageList.length !== 0) {
-      for (let i = 0; i < dataPrev.length; i++) {
-        listRef.current[i].classList.add("hidden");
-        listRef.current[i].classList.remove("flex");
-        for (let j = 12 * (page - 1); j < 12 * page; j++) {
-          if (listRef.current[j] !== undefined) {
-            listRef.current[j].classList.remove("hidden");
-            listRef.current[j].classList.add("flex");
-          }
-        }
-      }
-    }
-  }, [pageList, page]);
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    setPageList([]);
-    handlePageList();
-    let cnt = 0;
-    for (let i = 0; i < dataPrev.length; i++) {
-      listRef.current[i].classList.remove("hidden");
-      if (
-        listRef.current[i].innerText.includes(searchText) === false &&
-        listRef.current[i].children[2].innerText.includes(searchText) === false
-      ) {
-        listRef.current[i].classList.add("hidden");
-        cnt = cnt + 1;
-      }
-    }
-    setTotalPage(Math.ceil((dataPrev.length - cnt) / 12));
-  };
-  /*
-  const options = { threshold: 0.9 };
-  const callback = (entries, observer) => {
-    if (searching == false) {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          let num = parseInt(entry.target.dataset.index);
-          if ((num + 1) % 12 === 0) {
-            for (let i = num + 1; i < num + 13; i++) {
-              listRef.current[i].classList.remove("hidden");
-              listRef.current[i].classList.add("flex");
-            }
-          }
-        }
-      });
-    }
-  };
-  const observer = new IntersectionObserver(callback, options);
-
-  if (listRef.current[0] !== null) {
-    if (searching === false) {
-      listRef.current.forEach((el) => observer.observe(el));
-      console.log("false");
-    } else if (searching === true) {
-      listRef.current.forEach((el) => observer.disconnect(el));
-      console.log("true");
-    }
-  }
-*/
   const addDatabase = async () => {
     try {
       setDoc(doc(db, "data", userEmail, "arts", modalText[7]), {
@@ -167,42 +170,25 @@ export default function PrevDetail() {
   };
 
   return (
-    <div className="w-[100%] flex flex-col">
+    <div className="w-[100%] h-[100vh] flex flex-col ">
       <div
         ref={modalRef}
-        className="z-[2] hidden fixed bg-black w-[100%] h-[100vh] opacity-90"
+        className="z-[2] hidden fixed bg-black w-[100%] p-5 md:px-[5%] lg:px-[15%] h-[100vh] opacity-95"
       >
-        <BiX
-          color="white"
-          size={30}
-          className="hover:cursor-pointer"
-          onClick={() => modalRef.current.classList.add("hidden")}
-        />
-        <div className="p-3">
+        <div className="flex flex-col">
+          <BiXCircle
+            color="white"
+            size={30}
+            className="hover:cursor-pointer self-end mb-5"
+            onClick={() => modalRef.current.classList.add("hidden")}
+          />
           <div className="mb-5">
             <div className="flex items-center">
-              <div className="z-[2] mr-2 text-lg text-yellow-600 lg:text-4xl mb-1">
-                {modalText[0]}
-              </div>
-              {userEmail && (
-                <div>
-                  {bookMark ? (
-                    <BsFillBookmarkCheckFill
-                      size={22}
-                      color="#ca8a04"
-                      className="hover:cursor-pointer z-[2]"
-                      onClick={deleteDatabase}
-                    />
-                  ) : (
-                    <BsBookmarkPlus
-                      size={22}
-                      color="white"
-                      className="hover:cursor-pointer z-[2]"
-                      onClick={addDatabase}
-                    />
-                  )}
+              <div className="z-[2] flex items-center">
+                <div className="text-yellow-600 text-base lg:text-3xl">
+                  {modalText[0]}
                 </div>
-              )}
+              </div>
             </div>
             {modalText[1] && (
               <div className="z-[2] text-white text-xs lg:text-base">
@@ -219,87 +205,160 @@ export default function PrevDetail() {
                 전시 기간 | {modalText[4]} ~ {modalText[5]}
               </div>
             </div>
+            {userEmail && (
+              <div>
+                {bookMark ? (
+                  <BsFillBookmarkCheckFill
+                    size={20}
+                    color="#ca8a04"
+                    className="hover:cursor-pointer z-[2]"
+                    onClick={deleteDatabase}
+                  />
+                ) : (
+                  <BsBookmarkPlus
+                    size={20}
+                    color="white"
+                    className="hover:cursor-pointer z-[2]"
+                    onClick={addDatabase}
+                  />
+                )}
+              </div>
+            )}
           </div>
-          <div className="flex flex-wrap-reverse justify-center text-xs lg:flex-row lg:mt-5 lg:mr-10">
-            <div className="z-[2] text-white lg:mt-5 text-justify">
+          <div className="flex flex-wrap-reverse justify-center text-xs">
+            <div className="z-[2] text-white text-justify">
               {modalTextInfo}
               <a
                 href={modalText[6]}
                 target="_blank"
-                className="italic text-gray-500 hover:text-indigo-500"
+                className="italic text-gray-300 hover:text-yellow-600"
               >
                 더보기
               </a>
             </div>
             <img
               src={modalText[2]}
-              className="h-[200px] z-[2] lg:mt-5 lg:ml-6 p-2"
+              className="w-[100%] h-[50vh] object-cover z-[2]"
             />
           </div>
         </div>
       </div>
-      <div className="px-[10%] pt-[10vh]">
-        <div className="text-3xl lg:text-5xl">| 지난 전시</div>
+      <div className="h-[10vh] mt-[7vh] xl:px-[20%] px-[10%]">
+        <div className="text-3xl lg:text-4xl">| 지난 전시</div>
         <div className="flex justify-between items-center">
           <div className="text-sm lg:text-lg">
             서울시립미술관 지난 전시를 확인해보세요
           </div>
-          <div onClick={handleResetSearching} className="hover:cursor-pointer">
-            검색 초기화
-          </div>
           <form
-            onSubmit={handleSubmit}
-            className="flex justify-end items-center drop-shadow-lg rounded-full px-3 py-2 bg-gray-100"
+            onSubmit={(event) => {
+              setSearching(true);
+              setSubmitCheck(!submitCheck);
+              event.preventDefault();
+            }}
+            className="flex justify-end items-center drop-shadow-lg rounded-full px-2 py-1 bg-gray-100"
           >
             <input
               value={searchText || ""}
               onChange={(event) => setSearchText(event.target.value)}
               placeholder="제목, 이름으로 검색"
-              className="w-[20vw] text-sm p-1 mr-2 rounded-lg bg-gray-100"
+              className="w-[15vw] text-sm p-1 mr-2 rounded-lg bg-gray-100"
             />
-            <BiSearch size={20} className="hover:cursor-pointer" />
+            {!searching && (
+              <BiSearch size={20} className="hover:cursor-pointer" />
+            )}
+            {searching && (
+              <BiX
+                onClick={() => {
+                  setPage(1);
+                  handleResetSeaching();
+                }}
+                size={20}
+                className="hover:cursor-pointer"
+              />
+            )}
           </form>
         </div>
       </div>
-      <div className="px-[10%] mt-5 flex flex-wrap">
-        {dataPrev &&
-          dataPrev.map((item, index) => (
-            <div
-              onClick={handleModal}
-              ref={(el) => (listRef.current[index] = el)}
-              key={index}
-              data-index={index}
-              data-name={item.DP_NAME}
-              data-artist={item.DP_ARTIST}
-              data-id={item.DP_SEQ}
-              data-img={item.DP_MAIN_IMG}
-              data-place={item.DP_PLACE}
-              data-start={item.DP_START}
-              data-end={item.DP_END}
-              data-artpart={item.DP_ART_PART}
-              data-artcnt={item.DP_ART_CNT}
-              data-info={item.DP_INFO}
-              data-link={item.DP_LNK}
-              className="hidden w-[43%] text-xs m-2 lg:w-[23%] lg:h-[100%] flex-col hover:cursor-pointer hover:scale-105 duration-100 drop-shadow-lg"
-            >
-              <img
-                src={item.DP_MAIN_IMG}
-                className="w-[100%] h-[20vh] object-cover"
-              />
-              <div className="m-2 mt-3">{item.DP_NAME}</div>
-              <div className="hidden">{item.DP_ARTIST}</div>
-              <div className="hidden">{item.DP_START}</div>
-              <div className="hidden">{item.DP_END}</div>
-            </div>
-          ))}
-      </div>
-      {pageList && (
-        <div className="h-[10vh] flex justify-center">
+      {dataPrev !== undefined && (
+        <div
+          ref={dataRef}
+          className="mt-[3vh] xl:px-[20%] px-[10%] w-[100%] h-[70vh] flex flex-wrap content-start justify-start"
+        >
+          {dataPrev !== undefined && !searching ? (
+            dataPrev?.map((item, index) => (
+              <div
+                onClick={handleModal}
+                key={item?.DP_SEQ}
+                data-name={item?.DP_NAME}
+                data-artist={item?.DP_ARTIST}
+                data-id={item?.DP_SEQ}
+                data-img={item?.DP_MAIN_IMG}
+                data-place={item?.DP_PLACE}
+                data-start={item?.DP_START}
+                data-end={item?.DP_END}
+                data-artpart={item?.DP_ART_PART}
+                data-artcnt={item?.DP_ART_CNT}
+                data-info={item?.DP_INFO}
+                data-link={item?.DP_LNK}
+                className={
+                  index < 12
+                    ? "w-[25%] h-[22vh] text-xs p-2 mb-3 flex-col hover:cursor-pointer hover:scale-105 duration-100 drop-shadow-lg"
+                    : "hidden w-[25%] h-[22vh] text-xs p-2 mb-3 flex-col hover:cursor-pointer hover:scale-105 duration-100 drop-shadow-lg"
+                }
+              >
+                <img
+                  src={item.DP_MAIN_IMG || ""}
+                  loading="lazy"
+                  className="w-[100%] h-[80%] object-cover"
+                />
+                <div className="m-2 mt-3">{item?.DP_NAME || ""}</div>
+              </div>
+            ))
+          ) : searchedData ? (
+            searchedData[page - 1].map((item, index) => (
+              <div
+                onClick={handleModal}
+                key={index}
+                data-index={index}
+                data-name={item.DP_NAME}
+                data-artist={item.DP_ARTIST}
+                data-id={item.DP_SEQ}
+                data-img={item.DP_MAIN_IMG}
+                data-place={item.DP_PLACE}
+                data-start={item.DP_START}
+                data-end={item.DP_END}
+                data-artpart={item.DP_ART_PART}
+                data-artcnt={item.DP_ART_CNT}
+                data-info={item.DP_INFO}
+                data-link={item.DP_LNK}
+                className="w-[25%] h-[22vh] text-xs p-2 mb-3 flex-col hover:cursor-pointer hover:scale-105 duration-100 drop-shadow-lg"
+              >
+                <img
+                  src={item.DP_MAIN_IMG}
+                  loading="lazy"
+                  className="w-[100%] h-[80%] object-cover"
+                />
+                <div className="m-2 mt-3">{item.DP_NAME}</div>
+              </div>
+            ))
+          ) : (
+            <div>검색 결과가 없습니다</div>
+          )}
+        </div>
+      )}
+      {pageList === undefined ? (
+        <div>Loading...</div>
+      ) : (
+        <div className="px-[10%] w-[100%] h-[8vh] xl:px-[20%] flex justify-center items-center">
           {pageList.map((item, index) => (
             <div
               key={index}
+              className={
+                page === index + 1
+                  ? "bg-yellow-500 px-2 py-1 rounded-full mx-2 hover:cursor-pointer"
+                  : "px-2 py-1 mx-1 hover:cursor-pointer"
+              }
               onClick={(event) => setPage(parseInt(event.target.innerText))}
-              className="hover:cursor-pointer mx-1"
             >
               {item}
             </div>
