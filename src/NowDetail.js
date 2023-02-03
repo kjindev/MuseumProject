@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
-import {
-  BsChevronLeft,
-  BsBookmarkPlus,
-  BsFillBookmarkCheckFill,
-} from "react-icons/bs";
+import { useParams } from "react-router-dom";
+import { BsBookmarkPlus, BsFillBookmarkCheckFill } from "react-icons/bs";
 import {
   setDoc,
   doc,
@@ -37,6 +33,7 @@ export default function NowDetail() {
         end: dataNow[index].DP_END,
         img: dataNow[index].DP_MAIN_IMG,
         link: dataNow[index].DP_LNK,
+        info: dataNow[index].DP_INFO,
       });
       setBookMark(true);
     } catch (error) {
@@ -74,39 +71,43 @@ export default function NowDetail() {
       {dataNow === undefined ? (
         <div>Loading...</div>
       ) : (
-        <div className="flex flex-col md:flex-row h-[100vh] justify-center items-center">
+        <div className="flex flex-col pt-[7vh] md:pt-0 md:flex-row h-[100vh] justify-center items-center">
           <img
             src={dataNow[index].DP_MAIN_IMG}
-            className="w-[40%] h-[500px] mx-2 object-cover drop-shadow-lg"
+            className="w-[100%] md:w-[42%] h-[40vh] md:h-[500px] object-cover drop-shadow-lg"
           />
-          <div className="w-[40%] h-[500px] mx-2 p-3 overflow-scroll overflow-x-hidden bg-gray-50 drop-shadow-lg">
+          <div className="w-[100%] md:w-[42%] h-[500px] p-3 overflow-scroll overflow-x-hidden bg-gray-50 drop-shadow-lg">
             <div className="flex items-center">
-              <div className="title-font font-bold text-2xl mr-2">
+              <div className="title-font font-bold text-xl md:text-2xl mr-2">
                 {dataNow[index].DP_NAME}
               </div>
-              {userEmail && (
-                <div>
-                  {bookMark ? (
-                    <BsFillBookmarkCheckFill
-                      size={22}
-                      color="#ca8a04"
-                      className="hover:cursor-pointer"
-                      onClick={deleteDatabase}
-                    />
-                  ) : (
-                    <BsBookmarkPlus
-                      size={22}
-                      className="hover:cursor-pointer"
-                      onClick={addDatabase}
-                    />
-                  )}
-                </div>
-              )}
             </div>
             <div className="text-sm">
-              <div>| {dataNow[index].DP_ARTIST}</div>
-              <div>| {dataNow[index].DP_PLACE}</div>
-              <div>| {dataNow[index].DP_END} 까지</div>
+              <div className="flex justify-between items-center">
+                <div>
+                  <div>| {dataNow[index].DP_ARTIST}</div>
+                  <div>| {dataNow[index].DP_PLACE}</div>
+                  <div>| {dataNow[index].DP_END} 까지</div>
+                </div>
+                {userEmail && (
+                  <div>
+                    {bookMark ? (
+                      <BsFillBookmarkCheckFill
+                        size={22}
+                        color="#ca8a04"
+                        className="hover:cursor-pointer"
+                        onClick={deleteDatabase}
+                      />
+                    ) : (
+                      <BsBookmarkPlus
+                        size={22}
+                        className="hover:cursor-pointer"
+                        onClick={addDatabase}
+                      />
+                    )}
+                  </div>
+                )}
+              </div>
               <div className="text-justify mt-3">
                 {dataNow[index].DP_INFO}
                 <a

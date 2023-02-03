@@ -4,7 +4,7 @@ const dataSlice = createSlice({
   name: "data",
   initialState: {
     dataNowState: undefined,
-    dataPrevState: undefined,
+    dataPrevState: [],
     navNameState: "intro",
     slideIndexState: 0,
     bookMark: false,

@@ -30,7 +30,7 @@ export default function Now() {
   }, [slideIndex]);
 
   return (
-    <div className="w-[100%] h-[100vh] pt-[7vh] sm:pt-[10vh] flex flex-col justify-center">
+    <div className="w-[100%] h-[100vh] pt-[7vh] sm:pt-[10vh] flex flex-col justify-between md:justify-center">
       {dataNow !== undefined ? (
         <div className="h-[80vh]">
           <div className="text-center text-4xl">현재전시</div>
@@ -50,16 +50,16 @@ export default function Now() {
                 />
 
                 <div className="md:w-[80%] lg:w-[420px] lg:h-[60vh] mx-2 p-3 flex flex-col items-center drop-shadow-lg bg-gray-50">
-                  <div className="flex flex-col h-[100%]">
+                  <div className="flex flex-col">
                     <div className="title-font font-bold mb-3 text-lg sm:text-xl md:text-2xl">
                       {item.DP_NAME}
                     </div>
                     <div className="text-xs text-justify sm:text-sm">
-                      {`${item.DP_INFO.substr(0, 550)} ...`}
+                      {`${item.DP_INFO.substr(0, 500)} ...`}
                     </div>
                   </div>
                   <Link to={`NowDetail/${index}`}>
-                    <div className="py-5 flex items-center justify-self-end hover:text-yellow-600 hover:cursor-pointer">
+                    <div className="py-2 flex items-center justify-self-end hover:text-yellow-600 hover:cursor-pointer">
                       <div className="mr-2 text-xs sm:text-sm md:text-base">
                         자세히 보기
                       </div>
@@ -74,7 +74,7 @@ export default function Now() {
       ) : (
         <div>Loading...</div>
       )}
-      <div className="h-[20vh] flex justify-between md:justify-center items-center z-[1]">
+      <div className="m-3 md:h-[20vh] flex justify-between md:justify-center items-center z-[1] text-xs md:text-sm">
         <BsChevronLeft
           size={18}
           className={
@@ -83,7 +83,7 @@ export default function Now() {
           onClick={() => setSlideIndex(parseInt(slideIndex - 1))}
         />
         {dataNow && (
-          <div className="px-[10vw] text-sm">{`${slideIndex + 1} / ${
+          <div className="px-[10vw]">{`${slideIndex + 1} / ${
             dataNow.length
           }`}</div>
         )}

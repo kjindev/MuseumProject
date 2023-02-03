@@ -40,11 +40,11 @@ export default function Location() {
   return (
     <div className="w-[100%] h-[100vh] pt-[7vh] flex flex-col justify-center items-center">
       <div className="text-xl sm:text-2xl lg:text-4xl">방문하기</div>
-      <div className="flex flex-wrap justify-center content-center h-[100vh] w-[80%]">
+      <div className="flex flex-wrap justify-center content-center h-[100vh] w-[100%]">
         {museumName.map((item, index) => (
           <div
             key={index}
-            className="w-[40%] h-[18vh] m-2 sm:w-[30%] sm:h-[24vh] lg:w-[15vw] lg:h-[35vh]"
+            className="w-[40%] h-[18vh] m-2 sm:w-[30%] sm:h-[24vh] lg:w-[20vw] lg:h-[25vh]"
           >
             <Link to={`Map/${index}`}>
               <div className="w-[100%] h-[100%] p-1 md:p-2 bg-white drop-shadow-lg hover:scale-105 duration-100">

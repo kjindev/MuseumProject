@@ -51,7 +51,7 @@ export default function NavBar({ handleScrollView }) {
   };
 
   return (
-    <div onClick={handleScrollView} className="fixed z-[2] w-[100%]">
+    <div onClick={handleScrollView} className="fixed z-[2] w-[100%] bg-white">
       <div
         ref={menuRef}
         className="menu-moving hidden fixed ml-[20%] w-[80%] h-[100vh] bg-black px-3 py-1 md:hidden"
@@ -140,7 +140,7 @@ export default function NavBar({ handleScrollView }) {
           )}
         </div>
       </div>
-      <div className="p-3 mx-2 flex justify-between maxmd:items-center">
+      <div className="h-[7vh] p-3 mx-2 flex justify-between">
         {pathname === "/" ? (
           <div className="px-2 logo-font">OurMuseum</div>
         ) : (
@@ -151,7 +151,6 @@ export default function NavBar({ handleScrollView }) {
         <div className="flex maxmd:hidden">
           {pathname === "/" ? (
             <>
-              {" "}
               <div
                 className={navName === "intro" ? textStyleObserve : textStyle}
               >
@@ -187,22 +186,26 @@ export default function NavBar({ handleScrollView }) {
             <div
               onMouseOver={() => tooltipRef.current.classList.remove("hidden")}
               onMouseOut={() => tooltipRef.current.classList.add("hidden")}
-              className="ml-5 px-3 py-1 cursor-pointer text-sm border border-black bg-white w-[100px] text-center"
+              className={
+                pathname === "/userPage"
+                  ? "hidden"
+                  : "px-3 py-1 cursor-pointer text-sm w-[100px] h-[40px] text-end"
+              }
             >
               {userInfo.userName === null ? (
-                <div>
+                <div className="font-bold">
                   {userInfo.userEmail.length > 5
                     ? `${userInfo.userEmail.substr(0, 5) + "..."}님`
                     : `${userInfo.userEmail}님`}
                 </div>
               ) : (
-                <div>
+                <div className="font-bold">
                   {userInfo.userName.length > 5
                     ? `${userInfo.userName.substr(0, 5) + "..."}님`
                     : `${userInfo.userName}님`}
                 </div>
               )}
-              <div ref={tooltipRef} className="z-[2] hidden">
+              <div ref={tooltipRef} className="z-[2] bg-white hidden">
                 <Link to="/userPage">
                   <div className="mt-1 hover:text-yellow-600">마이페이지</div>
                 </Link>
@@ -216,23 +219,25 @@ export default function NavBar({ handleScrollView }) {
             </div>
           )}
         </div>
-        <div className="z-[2] md:hidden">
-          <div ref={menuIconRef}>
-            <BsList
-              onClick={handleMenuClick}
-              size={25}
-              className={menuVisible ? "hidden" : "hover:cursor-pointer"}
-            />
+        {pathname !== "/userPage" && (
+          <div className="z-[2] md:hidden">
+            <div ref={menuIconRef}>
+              <BsList
+                onClick={handleMenuClick}
+                size={25}
+                className={menuVisible ? "hidden" : "hover:cursor-pointer"}
+              />
+            </div>
+            <div>
+              <BsX
+                onClick={handleXClick}
+                color="white"
+                size={25}
+                className={!menuVisible ? "hidden" : "hover:cursor-pointer"}
+              />
+            </div>
           </div>
-          <div>
-            <BsX
-              onClick={handleXClick}
-              color="white"
-              size={25}
-              className={!menuVisible ? "hidden" : "hover:cursor-pointer"}
-            />
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

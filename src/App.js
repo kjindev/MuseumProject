@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Home from "./Home";
 import LogIn from "./LogIn";
 import UserPage from "./UserPage";
@@ -23,8 +23,10 @@ import NavBar from "./components/NavBar";
 function App() {
   const dispatch = useDispatch();
   const auth = getAuth();
+  const { pathname } = useLocation();
   const [dataNow, setDataNow] = useState([]);
   const [dataPrev, setDataPrev] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const date = new Date();
   const year = date.getFullYear();
   const month = ("0" + (date.getMonth() + 1)).slice(-2);
@@ -39,6 +41,7 @@ function App() {
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
+        setIsLoggedIn(true);
         dispatch(logIn());
         dispatch(userIDUpdate(user.uid));
         dispatch(userEmailUpdate(user.email));
@@ -54,6 +57,7 @@ function App() {
         }
       } else {
         dispatch(logOut());
+        setIsLoggedIn(false);
       }
     });
   }, []);
@@ -86,7 +90,7 @@ function App() {
 
   return (
     <>
-      <NavBar />
+      {pathname !== "/LogIn" && <NavBar />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/LogIn" element={<LogIn />} />
