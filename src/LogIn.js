@@ -23,6 +23,7 @@ export default function LogIn() {
   const navigator = useNavigate();
 
   useEffect(() => {
+    console.log(isLoggedIn);
     if (isLoggedIn) {
       navigator("/");
     }

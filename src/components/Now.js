@@ -14,7 +14,6 @@ export default function Now() {
   const [slideIndex, setSlideIndex] = useState(slideIndexState);
   const [prevButtomVisible, setPrevButtonVisible] = useState(true);
   const [nextButtomVisible, setNextButtonVisible] = useState(true);
-
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -31,10 +30,18 @@ export default function Now() {
 
   return (
     <div className="w-[100%] h-[100vh] pt-[7vh] sm:pt-[10vh] flex flex-col justify-between md:justify-center">
-      {dataNow !== undefined ? (
+      {dataNow === [] ? (
+        <div>Loading...</div>
+      ) : (
         <div className="h-[80vh]">
           <div className="text-center text-4xl">현재전시</div>
-          <div className="flex w-[600%] h-[100%]">
+          <div
+            className={
+              dataNow.length === 0
+                ? "flex w-[100%] h-[100%]"
+                : `flex w-[${dataNow.length * 100}%] h-[100%]`
+            }
+          >
             {dataNow.map((item, index) => (
               <div
                 key={index}
@@ -46,6 +53,7 @@ export default function Now() {
               >
                 <img
                   src={item.DP_MAIN_IMG}
+                  loading="lazy"
                   className="mt-7 px-2 md:p-0 w-[100%] h-[30vh] lg:mt-0 md:w-[80%] md:h-[40%] lg:w-[420px] lg:h-[60vh] drop-shadow-lg object-cover"
                 />
 
@@ -71,9 +79,8 @@ export default function Now() {
             ))}
           </div>
         </div>
-      ) : (
-        <div>Loading...</div>
       )}
+
       <div className="m-3 md:h-[20vh] flex justify-between md:justify-center items-center z-[1] text-xs md:text-sm">
         <BsChevronLeft
           size={18}

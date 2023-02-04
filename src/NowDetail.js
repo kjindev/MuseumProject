@@ -74,6 +74,7 @@ export default function NowDetail() {
         <div className="flex flex-col pt-[7vh] md:pt-0 md:flex-row h-[100vh] justify-center items-center">
           <img
             src={dataNow[index].DP_MAIN_IMG}
+            loading="lazy"
             className="w-[100%] md:w-[42%] h-[40vh] md:h-[500px] object-cover drop-shadow-lg"
           />
           <div className="w-[100%] md:w-[42%] h-[500px] p-3 overflow-scroll overflow-x-hidden bg-gray-50 drop-shadow-lg">

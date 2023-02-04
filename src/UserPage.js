@@ -13,7 +13,6 @@ export default function UserPage() {
   });
 
   const dispatch = useDispatch();
-  const editRef = useRef();
   const [userNameChanged, setUserNameChanged] = useState();
   const fileInputRef = useRef();
   let arts = [];
@@ -85,7 +84,6 @@ export default function UserPage() {
 
   const handleMenu = (event) => {
     const name = event.target.innerText;
-    console.log(name);
     if (name === "My 전시") {
       artRef.current.classList.remove("hidden");
       museumRef.current.classList.add("hidden");
@@ -102,6 +100,7 @@ export default function UserPage() {
           <div className="w-[25%] h-[100%] flex flex-col justify-center sm:justify-start items-center">
             <img
               src={userInfo.userPhoto}
+              loading="lazy"
               className="w-[300px] h-[300px] object-cover rounded-[50%]"
             />
             {!nameEditing && (

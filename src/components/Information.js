@@ -13,9 +13,9 @@ export default function Information() {
     setTimeout(textChange, 800);
   };
   return (
-    <div className="h-[30vh] bg-black text-white text-xs flex-col flex md:flex-row justify-center items-center hover:cursor-pointer">
+    <div className="h-[30vh] bg-black text-white text-xs flex-col flex md:flex-row justify-center items-center">
       <div className="flex flex-row md:flex-col justify-center items-center w-[100%] md:w-[20%]">
-        <AiOutlineMail size={22} className="m-3" />
+        <AiOutlineMail size={22} className="m-1 mr-2 md:m-3" />
         <div
           onClick={handleCopy}
           className="hover:cursor-pointer hover:text-gray-500"
@@ -24,7 +24,7 @@ export default function Information() {
         </div>
       </div>
       <div className="flex flex-row md:flex-col justify-center items-center w-[100%] md:w-[20%]">
-        <AiFillGithub size={22} className="m-3" />
+        <AiFillGithub size={22} className="m-1 mr-2 md:m-3" />
         <a
           className="hover:cursor-pointer hover:text-gray-500"
           href="https://github.com/kjindev"
@@ -34,7 +34,7 @@ export default function Information() {
         </a>
       </div>
       <div className="flex flex-row md:flex-col justify-center items-center w-[100%] md:w-[20%]">
-        <AiFillFolder size={22} className="m-3" />
+        <AiFillFolder size={22} className="m-1 mr-2 md:m-3" />
         <a
           className="hover:cursor-pointer hover:text-gray-500"
           href="https://inthedev.tistory.com"

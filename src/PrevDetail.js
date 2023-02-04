@@ -84,42 +84,46 @@ export default function PrevDetail() {
   }, [submitCheck]);
 
   const handleSubmit = (event) => {
-    if (dataPrev !== undefined) {
-      let cnt = 0;
-      let totalPageNumber = 0;
-      let dataItem = [];
-      let dataItems = [];
-      for (let i = 0; i < dataPrev.length; i++) {
-        if (
-          dataPrev[i].DP_NAME.includes(searchText) ||
-          dataPrev[i].DP_ARTIST.includes(searchText)
-        ) {
-          dataItem.push(dataPrev[i]);
-          cnt = cnt + 1;
-        }
-      }
-      if (cnt === 0) {
-        return setSearchedData(undefined), setTotalPage(Math.ceil(cnt / 12));
-      }
-      totalPageNumber = Math.ceil(cnt / 12);
-      setTotalPage(Math.ceil(cnt / 12));
-      let i = 0;
-      let dataArray = [];
-      while (i < totalPageNumber) {
-        dataItems = [];
-        if (i === totalPageNumber - 1) {
-          for (let j = i * 12; j < cnt; j++) {
-            dataItems.push(dataItem[j]);
-          }
-        } else {
-          for (let j = i * 12; j < (i + 1) * 12; j++) {
-            dataItems.push(dataItem[j]);
+    if (dataPrev !== []) {
+      try {
+        let cnt = 0;
+        let totalPageNumber = 0;
+        let dataItem = [];
+        let dataItems = [];
+        for (let i = 0; i < dataPrev.length; i++) {
+          if (
+            dataPrev[i].DP_NAME.includes(searchText) ||
+            dataPrev[i].DP_ARTIST.includes(searchText)
+          ) {
+            dataItem.push(dataPrev[i]);
+            cnt = cnt + 1;
           }
         }
-        dataArray.push(dataItems);
-        i++;
+        if (cnt === 0) {
+          return setSearchedData(undefined), setTotalPage(Math.ceil(cnt / 12));
+        }
+        totalPageNumber = Math.ceil(cnt / 12);
+        setTotalPage(Math.ceil(cnt / 12));
+        let i = 0;
+        let dataArray = [];
+        while (i < totalPageNumber) {
+          dataItems = [];
+          if (i === totalPageNumber - 1) {
+            for (let j = i * 12; j < cnt; j++) {
+              dataItems.push(dataItem[j]);
+            }
+          } else {
+            for (let j = i * 12; j < (i + 1) * 12; j++) {
+              dataItems.push(dataItem[j]);
+            }
+          }
+          dataArray.push(dataItems);
+          i++;
+        }
+        setSearchedData(dataArray);
+      } catch (error) {
+        console.log("에러");
       }
-      setSearchedData(dataArray);
     } else {
       return [];
     }
@@ -165,7 +169,6 @@ export default function PrevDetail() {
   };
 
   const addDatabase = async () => {
-    console.log(modalText[7]);
     try {
       setDoc(doc(db, "data", userEmail, "arts", modalText[7]), {
         name: modalText[0],
@@ -174,7 +177,6 @@ export default function PrevDetail() {
         end: modalText[5],
         img: modalText[2],
         link: modalText[6],
-        //info: modalText[9],
       });
       setBookMark(true);
     } catch (error) {
@@ -260,6 +262,7 @@ export default function PrevDetail() {
             </div>
             <img
               src={modalText[2]}
+              loading="lazy"
               className="w-[100%] h-[50vh] my-3 object-cover z-[2]"
             />
           </div>
@@ -327,14 +330,14 @@ export default function PrevDetail() {
                   className="w-[50%] h-[30vh] md:w-[25%] md:h-[22vh] text-xs p-2 mb-3 flex-col hover:cursor-pointer hover:scale-105 duration-100 drop-shadow-lg"
                 >
                   <img
-                    src={item.DP_MAIN_IMG}
+                    src={item?.DP_MAIN_IMG}
                     loading="lazy"
                     className="w-[100%] h-[80%] object-cover"
                   />
                   <div className="m-2 mt-3">
-                    {item.DP_NAME.length < 35
-                      ? item.DP_NAME
-                      : item.DP_NAME.slice(0, 35) + "..." || ""}
+                    {item?.DP_NAME.length < 35
+                      ? item?.DP_NAME
+                      : item?.DP_NAME.slice(0, 35) + "..." || ""}
                   </div>
                 </div>
               ))
@@ -367,14 +370,14 @@ export default function PrevDetail() {
                 }
               >
                 <img
-                  src={item.DP_MAIN_IMG || ""}
+                  src={item?.DP_MAIN_IMG || ""}
                   loading="lazy"
                   className="w-[100%] h-[80%] object-cover"
                 />
                 <div className="m-2 mt-3">
-                  {item.DP_NAME.length < 35
-                    ? item.DP_NAME
-                    : item.DP_NAME.slice(0, 35) + "..." || ""}
+                  {item?.DP_NAME.length < 35
+                    ? item?.DP_NAME
+                    : item?.DP_NAME.slice(0, 35) + "..." || ""}
                 </div>
               </div>
             ))

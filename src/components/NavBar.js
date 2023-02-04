@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AiOutlineHome } from "react-icons/ai";
 import { BsList, BsX, BsChevronRight } from "react-icons/bs";
 import { useSelector } from "react-redux";
@@ -49,6 +49,10 @@ export default function NavBar({ handleScrollView }) {
     menuIconRef.current.classList.remove("hidden");
     menuRef.current.classList.add("hidden");
   };
+
+  useEffect(() => {
+    menuRef.current.classList.add("hidden");
+  }, [pathname]);
 
   return (
     <div onClick={handleScrollView} className="fixed z-[2] w-[100%] bg-white">
@@ -219,25 +223,23 @@ export default function NavBar({ handleScrollView }) {
             </div>
           )}
         </div>
-        {pathname !== "/userPage" && (
-          <div className="z-[2] md:hidden">
-            <div ref={menuIconRef}>
-              <BsList
-                onClick={handleMenuClick}
-                size={25}
-                className={menuVisible ? "hidden" : "hover:cursor-pointer"}
-              />
-            </div>
-            <div>
-              <BsX
-                onClick={handleXClick}
-                color="white"
-                size={25}
-                className={!menuVisible ? "hidden" : "hover:cursor-pointer"}
-              />
-            </div>
+        <div className="z-[2] md:hidden">
+          <div ref={menuIconRef}>
+            <BsList
+              onClick={handleMenuClick}
+              size={25}
+              className={menuVisible ? "hidden" : "hover:cursor-pointer"}
+            />
           </div>
-        )}
+          <div>
+            <BsX
+              onClick={handleXClick}
+              color="white"
+              size={25}
+              className={!menuVisible ? "hidden" : "hover:cursor-pointer"}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

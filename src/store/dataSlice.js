@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const dataSlice = createSlice({
   name: "data",
   initialState: {
-    dataNowState: undefined,
+    dataNowState: [],
     dataPrevState: [],
     navNameState: "intro",
     slideIndexState: 0,

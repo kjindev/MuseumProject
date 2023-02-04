@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Home from "./Home";
 import LogIn from "./LogIn";
 import UserPage from "./UserPage";
 import NowDetail from "./NowDetail";
 import PrevDetail from "./PrevDetail";
 import Map from "./Map";
-import { useDispatch } from "react-redux";
+import NavBar from "./components/NavBar";
+import NotFound from "./NotFound";
+import { useDispatch, useSelector } from "react-redux";
 import { logIn, logOut } from "./store/authSlice";
 import {
   userIDUpdate,
@@ -18,15 +20,17 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useQuery } from "react-query";
 import { dataNowUpdate, dataPrevUpdate } from "./store/dataSlice";
 import { windowStateUpdate } from "./store/windowSlice";
-import NavBar from "./components/NavBar";
+import UserNotFound from "./UserNotFound";
 
 function App() {
   const dispatch = useDispatch();
+  const isLoggedIn = useSelector((state) => {
+    return state.auth.logInState;
+  });
+
   const auth = getAuth();
-  const { pathname } = useLocation();
   const [dataNow, setDataNow] = useState([]);
   const [dataPrev, setDataPrev] = useState([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const date = new Date();
   const year = date.getFullYear();
   const month = ("0" + (date.getMonth() + 1)).slice(-2);
@@ -41,7 +45,6 @@ function App() {
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        setIsLoggedIn(true);
         dispatch(logIn());
         dispatch(userIDUpdate(user.uid));
         dispatch(userEmailUpdate(user.email));
@@ -57,7 +60,6 @@ function App() {
         }
       } else {
         dispatch(logOut());
-        setIsLoggedIn(false);
       }
     });
   }, []);
@@ -90,14 +92,21 @@ function App() {
 
   return (
     <>
-      {pathname !== "/LogIn" && <NavBar />}
+      <NavBar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/LogIn" element={<LogIn />} />
-        <Route path="/UserPage" element={<UserPage />} />
+        {
+          <Route
+            path="/UserPage"
+            element={isLoggedIn ? <UserPage /> : <UserNotFound />}
+          />
+        }
         <Route path="/NowDetail/:index" element={<NowDetail />} />
         <Route path="/PrevDetail" element={<PrevDetail />} />
         <Route path="/Map/:index" element={<Map />} />
+        <Route path="/UserNotFound" element={<UserNotFound />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );
