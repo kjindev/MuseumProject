@@ -55,7 +55,7 @@ export default function NavBar({ handleScrollView }) {
   }, [pathname]);
 
   return (
-    <div onClick={handleScrollView} className="fixed z-[2] w-[100%] bg-white">
+    <div onClick={handleScrollView} className="fixed z-[2] w-[100%]">
       <div
         ref={menuRef}
         className="menu-moving hidden fixed ml-[20%] w-[80%] h-[100vh] bg-black px-3 py-1 md:hidden"
@@ -144,7 +144,7 @@ export default function NavBar({ handleScrollView }) {
           )}
         </div>
       </div>
-      <div className="h-[7vh] p-3 mx-2 flex justify-between">
+      <div className="h-[7vh] p-2 mx-1 flex justify-between">
         {pathname === "/" ? (
           <div className="px-2 logo-font">OurMuseum</div>
         ) : (
@@ -223,23 +223,25 @@ export default function NavBar({ handleScrollView }) {
             </div>
           )}
         </div>
-        <div className="z-[2] md:hidden">
-          <div ref={menuIconRef}>
-            <BsList
-              onClick={handleMenuClick}
-              size={25}
-              className={menuVisible ? "hidden" : "hover:cursor-pointer"}
-            />
+        {pathname !== "/userPage" && (
+          <div className="z-[2] md:hidden">
+            <div ref={menuIconRef}>
+              <BsList
+                onClick={handleMenuClick}
+                size={25}
+                className={menuVisible ? "hidden" : "hover:cursor-pointer"}
+              />
+            </div>
+            <div>
+              <BsX
+                onClick={handleXClick}
+                color="white"
+                size={25}
+                className={!menuVisible ? "hidden" : "hover:cursor-pointer"}
+              />
+            </div>
           </div>
-          <div>
-            <BsX
-              onClick={handleXClick}
-              color="white"
-              size={25}
-              className={!menuVisible ? "hidden" : "hover:cursor-pointer"}
-            />
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

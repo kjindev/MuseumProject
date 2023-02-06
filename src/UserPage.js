@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AiOutlineLink } from "react-icons/ai";
+import { BsDashCircle } from "react-icons/bs";
+import { AiFillEdit } from "react-icons/ai";
 import { userNameUpdate, userPhotoUpdate } from "./store/userSlice";
 import { getAuth, updateProfile } from "firebase/auth";
 import { collection, query, onSnapshot } from "firebase/firestore";
@@ -23,6 +24,8 @@ export default function UserPage() {
   const artRef = useRef();
   const museumRef = useRef();
   const tooltipRef = useRef();
+  const nameTooltipRef = useRef([]);
+
   const [nameEditing, setNameEditing] = useState(false);
 
   useEffect(() => {
@@ -86,25 +89,29 @@ export default function UserPage() {
     const name = event.target.innerText;
     if (name === "My 전시") {
       artRef.current.classList.remove("hidden");
+      artRef.current.classList.add("flex");
       museumRef.current.classList.add("hidden");
+      museumRef.current.classList.remove("flex");
     } else if (name === "My 미술관") {
       museumRef.current.classList.remove("hidden");
+      museumRef.current.classList.add("flex");
       artRef.current.classList.add("hidden");
+      artRef.current.classList.remove("flex");
     }
   };
 
   return (
-    <div>
-      <div className="w-[100%] h-[100vh] flex flex-col items-center justify-center">
-        <div className="flex flex-col md:flex-row justify-center items-center w-[80%] h-[70vh]">
+    <div className="pb-5 md:p-0">
+      <div className="w-[100%] pt-[12vh] md:h-[100vh] flex flex-col items-center">
+        <div className="flex flex-col md:flex-row justify-center items-center w-[100%] md:w-[80%] md:h-[70vh]">
           <div className="w-[25%] h-[100%] flex flex-col justify-center sm:justify-start items-center">
             <img
               src={userInfo.userPhoto}
               loading="lazy"
-              className="w-[300px] h-[300px] object-cover rounded-[50%]"
+              className="w-[12vh] h-[12vh] md:w-[20vh] md:h-[20vh] object-cover rounded-[50%]"
             />
             {!nameEditing && (
-              <div className="text-xl mt-5">
+              <div className="text-base md:text-xl mt-3 md:mt-5">
                 {userInfo.userName === null
                   ? userInfo.userEmail
                   : userInfo.userName}
@@ -113,14 +120,14 @@ export default function UserPage() {
             {nameEditing && (
               <form
                 onSubmit={handleUserNameSubmit}
-                className="mt-5 ml-5 flex justify-center items-center"
+                className="mt-3 md:mt-5 md:ml-5 flex justify-center items-center"
               >
                 <input
                   onChange={handleUserNameUpdate}
                   type="text"
                   value={userNameChanged || ""}
                   placeholder={userInfo.userName}
-                  className="w-[70%] text-center border border-white border-b-gray-500"
+                  className="w-[100%] md:w-[70%] text-center border border-white border-b-gray-500"
                 />
                 <input
                   type="submit"
@@ -129,25 +136,33 @@ export default function UserPage() {
                 />
               </form>
             )}
-            <div className="text-base text-gray-500">{userInfo.userEmail}</div>
+            <div className="text-sm md:text-base text-gray-500">
+              {userInfo.userEmail}
+            </div>
             <div
-              className="mt-5 w-[100%] flex flex-col items-center justify-center rounded-lg"
+              className="my-3 md:mt-5 w-[100%] flex flex-col items-center justify-center rounded-lg"
               onMouseOver={() => tooltipRef.current.classList.remove("hidden")}
               onMouseOut={() => tooltipRef.current.classList.add("hidden")}
             >
-              <div className="hover:cursor-pointer bg-gray-200 w-[70%] text-center">
+              <div className="hover:cursor-pointer text-yellow-600 w-[100%] text-sm text-center">
                 프로필 수정
               </div>
               <div
                 ref={tooltipRef}
-                className="z-[2] text-center w-[70%] bg-gray-200 hidden"
+                className="z-[2] text-center w-[70%] hidden"
               >
-                <form>
+                <div
+                  onClick={() => setNameEditing(true)}
+                  className="mt-2 hover:cursor-pointer hover:text-yellow-600 text-sm"
+                >
+                  이름 변경
+                </div>
+                <form className="mt-1">
                   <label
                     htmlFor="input-file"
-                    className="mt-1 hover:cursor-pointer hover:text-yellow-600"
+                    className="hover:cursor-pointer hover:text-yellow-600 text-sm"
                   >
-                    사진 업로드
+                    사진 변경
                   </label>
                   <input
                     type="file"
@@ -158,61 +173,46 @@ export default function UserPage() {
                     className="hidden"
                   />
                 </form>
-                <div
-                  onClick={() => setNameEditing(true)}
-                  className="mt-1 hover:cursor-pointer hover:text-yellow-600"
-                >
-                  닉네임 변경
-                </div>
               </div>
             </div>
           </div>
-          <div className="pl-10 w-[100%] md:w-[75%] md:h-[100%]">
+          <div className="md:pl-10 w-[100%] md:w-[80%] md:h-[100%]">
             <div
               onClick={handleMenu}
-              className="flex justify-center items-center mb-7"
+              className="flex justify-center items-center mb-2 md:mb-7"
             >
               <div className="mx-7 hover:cursor-pointer">My 전시</div>
               <div className="mx-7 hover:cursor-pointer">My 미술관</div>
             </div>
             <div
               ref={artRef}
-              className="pl-10 w-[100%] h-[100%] overflow-x-hidden overflow-y-scroll"
+              className="p-0 md:pl-10 flex flex-wrap justify-center w-[100%] md:h-[100%] md:overflow-x-hidden"
             >
               {artList === [] ? (
                 <div>Loading...</div>
               ) : (
                 artList.map((item, index) => (
                   <div
+                    ref={(el) => (nameTooltipRef.current[index] = el)}
+                    data-name={item.name}
+                    onClick={(event) => console.log(event.target)}
                     key={index}
-                    className="flex w-[100%] h-[50%] p-2 bg-white m-2 drop-shadow-lg rounded-lg"
+                    className="relative hover:cursor-pointer flex flex-col w-[40%] h-[30vh] md:w-[28%] md:h-[30%] bg-white m-2 drop-shadow-lg rounded-lg"
                   >
-                    <img src={item.img} className="object-cover rounded-lg" />
-                    <div className="text-sm p-3">
-                      <div className="font-bold text-lg">{item.name}</div>
-                      <div className="text-justify">
-                        아티스트 | {item.artist}
-                      </div>
-                      <div className="flex text-justify">
-                        상세정보 |
-                        <a
-                          href={item.link}
-                          target="_blank"
-                          className="flex items-center italic text-gray-700 hover:text-yellow-600"
-                        >
-                          <AiOutlineLink className="ml-1" />
-                          <div>홈페이지 링크</div>
-                        </a>
-                      </div>
+                    <img
+                      src={item.img}
+                      className="w-[100%] h-[100%] object-cover rounded-lg"
+                    />
+                    <div className="hidden absolute text-sm top-[50%] translate-y-[-50%] bg-white w-[100%]">
+                      {item.name}
                     </div>
                   </div>
                 ))
               )}
             </div>
-
             <div
               ref={museumRef}
-              className="hidden pl-10 w-[100%] h-[100%] overflow-x-hidden overflow-y-scroll"
+              className="hidden pl-10 flex-wrap content-start w-[100%] h-[100%] overflow-x-hidden"
             >
               {museumList === [] ? (
                 <div>Loading...</div>
@@ -220,28 +220,15 @@ export default function UserPage() {
                 museumList.map((item, index) => (
                   <div
                     key={index}
-                    className="flex w-[100%] h-[50%] p-2 bg-white m-2 drop-shadow-lg rounded-lg"
+                    className="flex w-[30%] h-[30%] bg-white m-2 drop-shadow-lg rounded-lg"
                   >
                     <img
                       src={item.img}
-                      className="w-[50%] h-[100%] object-cover rounded-lg"
+                      className="w-[100%] h-[100%] object-cover rounded-lg"
                     />
-                    <div className="text-sm p-3 text-justify">
+                    {/*<div className="text-sm p-3 text-justify">
                       <div className="font-bold text-lg">{item.name}</div>
-                      <div className="mt-1">주소 | {item.address}</div>
-                      <div className="flex mt-1">
-                        상세정보 |
-                        <a
-                          href={item.link}
-                          target="_blank"
-                          className="flex items-center italic text-gray-700 hover:cursor-pointer hover:text-yellow-600"
-                        >
-                          <AiOutlineLink className="ml-1" />
-                          <div>홈페이지 링크</div>
-                        </a>
-                      </div>
-                      <div className="mt-1">대표번호 | {item.phone}</div>
-                    </div>
+                </div>*/}
                   </div>
                 ))
               )}

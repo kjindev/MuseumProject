@@ -38,9 +38,10 @@ export default function Location() {
   ];
 
   return (
-    <div className="w-[100%] h-[100vh] pt-[7vh] flex flex-col justify-center items-center">
-      <div className="text-xl sm:text-2xl lg:text-4xl">방문하기</div>
-      <div className="flex flex-wrap justify-center content-center h-[100vh] w-[100%]">
+    <div className="pt-[10vh] w-[100%] h-[100vh] flex flex-col items-center">
+      <div className="text-2xl md:text-3xl">방문하기</div>
+      <div className="mt-2">| 서울시립미술관을 직접 방문해보세요</div>
+      <div className="mt-7 flex flex-wrap justify-center content-center w-[95%]">
         {museumName.map((item, index) => (
           <div
             key={index}

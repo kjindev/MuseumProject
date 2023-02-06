@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { BsChevronLeft, BsChevronRight, BsArrowRight } from "react-icons/bs";
+import {
+  BsChevronLeft,
+  BsChevronRight,
+  BsArrowRight,
+  BsGeoAlt,
+} from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { slideIndexUpdate } from "../store/dataSlice";
@@ -20,7 +25,7 @@ export default function Now() {
     dispatch(slideIndexUpdate(slideIndex));
     if (slideIndex === 0) {
       setPrevButtonVisible(false);
-    } else if (slideIndex === 6) {
+    } else if (slideIndex === dataNow.length - 1) {
       setNextButtonVisible(false);
     } else {
       setPrevButtonVisible(true);
@@ -29,23 +34,21 @@ export default function Now() {
   }, [slideIndex]);
 
   return (
-    <div className="w-[100%] h-[100vh] pt-[7vh] sm:pt-[10vh] flex flex-col justify-between md:justify-center">
+    <div className="flex flex-col justify-between pb-12 w-[100%] h-[100vh] pt-[10vh]">
       {dataNow === [] ? (
         <div>Loading...</div>
       ) : (
-        <div className="h-[80vh]">
-          <div className="text-center text-4xl">현재전시</div>
-          <div
-            className={
-              dataNow.length === 0
-                ? "flex w-[100%] h-[100%]"
-                : `flex w-[${dataNow.length * 100}%] h-[100%]`
-            }
-          >
+        <div>
+          <div className="text-center text-2xl md:text-3xl">현재 전시</div>
+          <div className="mt-2 text-center">
+            | 클릭하여 자세한 내용을 확인해보세요
+          </div>
+          <div className="mt-7 w-[600%] flex">
             {dataNow.map((item, index) => (
-              <div
+              <Link
+                to={`NowDetail/${index}`}
                 key={index}
-                className="w-[100%] h-[100%] flex flex-col lg:flex-row justify-center items-center"
+                className="w-[100%] flex flex-col lg:flex-row items-center justify-center drop-shadow-lg"
                 style={{
                   transform: `translateX(-${slideIndex * 100}%)`,
                   transitionDuration: "1s",
@@ -54,34 +57,29 @@ export default function Now() {
                 <img
                   src={item.DP_MAIN_IMG}
                   loading="lazy"
-                  className="mt-7 px-2 md:p-0 w-[100%] h-[30vh] lg:mt-0 md:w-[80%] md:h-[40%] lg:w-[420px] lg:h-[60vh] drop-shadow-lg object-cover"
+                  className="w-[100%] h-[30vh] md:w-[80%] md:h-[30vh] lg:w-[420px] lg:h-[60vh] xl:w-[520px] object-cover"
                 />
-
-                <div className="md:w-[80%] lg:w-[420px] lg:h-[60vh] mx-2 p-3 flex flex-col items-center drop-shadow-lg bg-gray-50">
-                  <div className="flex flex-col">
-                    <div className="title-font font-bold mb-3 text-lg sm:text-xl md:text-2xl">
-                      {item.DP_NAME}
-                    </div>
-                    <div className="text-xs text-justify sm:text-sm">
-                      {`${item.DP_INFO.substr(0, 500)} ...`}
-                    </div>
+                <div className="hover:bg-gray-100 w-[100%] md:w-[80%] lg:w-[420px] lg:h-[60vh] xl:w-[520px] p-3 bg-gray-50">
+                  <div className="title-font font-bold text-lg sm:text-xl md:text-2xl xl:text-3xl">
+                    {item.DP_NAME}
                   </div>
-                  <Link to={`NowDetail/${index}`}>
-                    <div className="py-2 flex items-center justify-self-end hover:text-yellow-600 hover:cursor-pointer">
-                      <div className="mr-2 text-xs sm:text-sm md:text-base">
-                        자세히 보기
-                      </div>
-                      <BsArrowRight />
-                    </div>
-                  </Link>
+                  <div className="mt-1 md:mt-2 flex items-center text-sm md:text-base text-justify">
+                    <BsGeoAlt />
+                    <div>{item.DP_PLACE}</div>
+                  </div>
+                  <div className="md:hidden mt-2 md:mt-5 text-xs text-justify sm:text-sm">
+                    {`${item.DP_INFO.substr(0, 350)} ...`}
+                  </div>
+                  <div className="mt-2 maxmd:hidden md:mt-5 text-xs text-justify sm:text-sm">
+                    {`${item.DP_INFO.substr(0, 450)} ...`}
+                  </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
       )}
-
-      <div className="m-3 md:h-[20vh] flex justify-between md:justify-center items-center z-[1] text-xs md:text-sm">
+      <div className="flex justify-between md:justify-center items-center z-[1] text-xs md:text-sm">
         <BsChevronLeft
           size={18}
           className={
