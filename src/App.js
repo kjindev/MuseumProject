@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Home from "./Home";
 import LogIn from "./LogIn";
 import UserPage from "./UserPage";
 import NowDetail from "./NowDetail";
 import PrevDetail from "./PrevDetail";
 import Map from "./Map";
-import NavBar from "./components/NavBar";
 import NotFound from "./NotFound";
 import { useDispatch, useSelector } from "react-redux";
 import { logIn, logOut } from "./store/authSlice";
@@ -27,7 +26,7 @@ function App() {
   const isLoggedIn = useSelector((state) => {
     return state.auth.logInState;
   });
-
+  const { pathname } = useLocation();
   const auth = getAuth();
   const [dataNow, setDataNow] = useState([]);
   const [dataPrev, setDataPrev] = useState([]);
@@ -92,10 +91,8 @@ function App() {
 
   return (
     <>
-      <NavBar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/LogIn" element={<LogIn />} />
         {
           <Route
             path="/UserPage"
@@ -105,6 +102,7 @@ function App() {
         <Route path="/NowDetail/:index" element={<NowDetail />} />
         <Route path="/PrevDetail" element={<PrevDetail />} />
         <Route path="/Map/:index" element={<Map />} />
+        <Route path="/LogIn" element={<LogIn />} />
         <Route path="/UserNotFound" element={<UserNotFound />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

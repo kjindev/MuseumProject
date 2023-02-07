@@ -18,6 +18,7 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
+import NavBar from "./components/NavBar";
 
 export default function Map() {
   const { index } = useParams();
@@ -47,6 +48,7 @@ export default function Map() {
       phone: "02-2124-8800",
       Lat: 37.5640625,
       Lng: 126.9738125,
+      id: 0,
     },
     1: {
       name: "서울시립 북서울미술관",
@@ -64,6 +66,7 @@ export default function Map() {
       phone: "02-2124-8800",
       Lat: 37.6407938,
       Lng: 127.0667628,
+      id: 1,
     },
     2: {
       name: "서울시립 남서울미술관",
@@ -79,6 +82,7 @@ export default function Map() {
       phone: "02-2124-8800",
       Lat: 37.4761313,
       Lng: 126.9795938,
+      id: 2,
     },
     3: {
       name: "서울시립 미술아카이브",
@@ -88,6 +92,7 @@ export default function Map() {
       phone: "02-2133-4191",
       Lat: 37.6103289,
       Lng: 126.9744456,
+      id: 3,
     },
     4: {
       name: "서울시립 난지미술창작스튜디오",
@@ -106,6 +111,7 @@ export default function Map() {
       phone: "02-2124-8800",
       Lat: 37.5690289,
       Lng: 126.8785234,
+      id: 4,
     },
     5: {
       name: "SeMA 벙커",
@@ -122,6 +128,7 @@ export default function Map() {
       phone: "02-2124-8942",
       Lat: 37.5254177,
       Lng: 126.9242075,
+      id: 5,
     },
     6: {
       name: "SeMA 창고",
@@ -137,6 +144,7 @@ export default function Map() {
       phone: "02-2124-8946",
       Lat: 37.6092596,
       Lng: 126.9342695,
+      id: 6,
     },
     7: {
       name: "SeMA 백남준기념관",
@@ -152,6 +160,7 @@ export default function Map() {
       phone: "02-2124-5268",
       Lat: 37.5730106,
       Lng: 127.0137485,
+      id: 7,
     },
   };
 
@@ -224,9 +233,8 @@ export default function Map() {
       setDoc(doc(db, "data", userEmail, "museum", museumList[index].name), {
         name: museumList[index].name,
         address: museumList[index].address,
-        phone: museumList[index].phone,
-        link: directionsList[index].link,
         img: museumList[index].img,
+        id: museumList[index].Lat,
       });
       setBookMark(true);
     } catch (error) {
@@ -292,171 +300,174 @@ export default function Map() {
   }, []);
 
   return (
-    <div className="w-[100%] pt-[7vh] md:pt-0 md:h-[100vh] flex flex-col justify-center items-center">
-      <div className="px-3 w-[100%] md:w-[84%] flex justify-between items-center">
-        <div className="flex items-center">
-          <div className="text-lg mr-2 sm:text-xl md:text-xl lg:text-3xl">
-            {museumList[index].name}
-          </div>
-          {userEmail && (
-            <div>
-              {bookMark ? (
-                <BsFillBookmarkCheckFill
-                  size={22}
-                  color="#ca8a04"
-                  className="hover:cursor-pointer"
-                  onClick={deleteDatabase}
-                />
-              ) : (
-                <BsBookmarkPlus
-                  size={22}
-                  className="hover:cursor-pointer"
-                  onClick={addDatabase}
-                />
-              )}
+    <>
+      <NavBar />
+      <div className="w-[100%] pt-[7vh] md:pt-0 md:h-[100vh] flex flex-col justify-center items-center">
+        <div className="px-3 w-[100%] md:w-[84%] flex justify-between items-center">
+          <div className="flex items-center">
+            <div className="text-lg mr-2 sm:text-xl md:text-xl lg:text-3xl">
+              {museumList[index].name}
             </div>
-          )}
+            {userEmail && (
+              <div>
+                {bookMark ? (
+                  <BsFillBookmarkCheckFill
+                    size={22}
+                    color="#ca8a04"
+                    className="hover:cursor-pointer"
+                    onClick={deleteDatabase}
+                  />
+                ) : (
+                  <BsBookmarkPlus
+                    size={22}
+                    className="hover:cursor-pointer"
+                    onClick={addDatabase}
+                  />
+                )}
+              </div>
+            )}
+          </div>
+          <div className="flex items-center">
+            <BsChatRightText
+              size={20}
+              className="mx-1 hover:cursor-pointer"
+              onClick={handleInfo}
+            />
+            <BsGeoAlt
+              size={20}
+              className="mx-1 hover:cursor-pointer"
+              onClick={handleDirection}
+            />
+          </div>
         </div>
-        <div className="flex items-center">
-          <BsChatRightText
-            size={20}
-            className="mx-1 hover:cursor-pointer"
-            onClick={handleInfo}
+        <div
+          ref={infoRef}
+          className="w-[100%] mt-3 flex flex-col justify-center items-center md:flex-row drop-shadow-lg"
+        >
+          <img
+            src={museumList[index].img}
+            className="w-[100%] md:w-[42%] h-[40vh] md:h-[500px] object-cover"
           />
-          <BsGeoAlt
-            size={20}
-            className="mx-1 hover:cursor-pointer"
-            onClick={handleDirection}
-          />
-        </div>
-      </div>
-      <div
-        ref={infoRef}
-        className="w-[100%] mt-3 flex flex-col justify-center items-center md:flex-row drop-shadow-lg"
-      >
-        <img
-          src={museumList[index].img}
-          className="w-[100%] md:w-[42%] h-[40vh] md:h-[500px] object-cover"
-        />
-        <div className="w-[100%] md:w-[42%] md:h-[500px] object-cover bg-gray-50">
-          {index !== "3" ? (
-            <div className="p-3">
-              <div className="mb-3">
-                <div className="font-bold">| 이용 시간</div>
-                <div>화요일 - 금요일 : {museumList[index].weekday}</div>
-                <div>
-                  주말, 공휴일 :{" "}
-                  {museumList[index].weekend_summer !== undefined ? (
-                    <span>
-                      하절기(3-10월) {museumList[index].weekend_summer} /
-                      동절기(11-2월) {museumList[index].weekend_winter}{" "}
-                    </span>
-                  ) : (
-                    <span>{museumList[index].weekend}</span>
-                  )}
+          <div className="w-[100%] md:w-[42%] md:h-[500px] object-cover bg-gray-50">
+            {index !== "3" ? (
+              <div className="p-3">
+                <div className="mb-3">
+                  <div className="font-bold">| 이용 시간</div>
+                  <div>화요일 - 금요일 : {museumList[index].weekday}</div>
+                  <div>
+                    주말, 공휴일 :{" "}
+                    {museumList[index].weekend_summer !== undefined ? (
+                      <span>
+                        하절기(3-10월) {museumList[index].weekend_summer} /
+                        동절기(11-2월) {museumList[index].weekend_winter}{" "}
+                      </span>
+                    ) : (
+                      <span>{museumList[index].weekend}</span>
+                    )}
+                  </div>
+                </div>
+                <div className="mb-3">
+                  <div className="font-bold">| 휴관</div>
+                  <div className="flex">
+                    <div>
+                      {museumList[index].closed_day},{" "}
+                      {museumList[index].regular_closing_day}(*정기휴관)
+                    </div>
+                  </div>
+                </div>
+                <div className="mb-3">
+                  <div className="font-bold">| 입장 시간</div>
+                  <div>{museumList[index].opening_hour}</div>
+                </div>
+                <div className="mb-3">
+                  <div className="font-bold">| 입장 가격</div>
+                  <div>{museumList[index].admission}</div>
+                </div>{" "}
+                <div className="mb-3">
+                  <div className="font-bold">| 대표 번호</div>
+                  <div>{museumList[index].phone}</div>
                 </div>
               </div>
-              <div className="mb-3">
-                <div className="font-bold">| 휴관</div>
-                <div className="flex">
-                  <div>
-                    {museumList[index].closed_day},{" "}
-                    {museumList[index].regular_closing_day}(*정기휴관)
+            ) : (
+              <div className="p-3">
+                <div className="mb-3 text-xs text-justify">
+                  <span className="font-bold">미술아카이브</span>는 미술의
+                  역사를 보존하고 연구하는 미술관입니다. 미술아카이브는 예술인
+                  개인과 단체가 남긴 미술사의 발자취를 좇아 수많은 기록과 자료를
+                  수집 선별하여 보존하고 연구합니다. 또한 아카이브를 매개로 한
+                  프로그램을 통해 다양한 사용자들과 관계를 맺고, 새로운 예술을
+                  상상합니다.{" "}
+                  <span className="italic">(2023년 3월 개관 예정)</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        <div
+          ref={directionsRef}
+          className="w-[100%] mt-3 hidden flex-col justify-center items-center md:flex-row drop-shadow-lg"
+        >
+          <div
+            ref={mapRef}
+            className="w-[100vw] md:w-[42vw] h-[300px] md:h-[500px]"
+          ></div>
+          <div className="w-[100%] md:w-[42%] md:h-[500px] bg-gray-50">
+            {index !== "3" ? (
+              <div className="p-3">
+                <div className="mb-3">
+                  <div className="font-bold">| 주소 </div>
+                  {museumList[index].address}
+                </div>
+                <div className="mb-3">
+                  <div className="font-bold">| 지하철 이용 안내</div>
+                  {directionsList[index].subway}
+                </div>
+                <div className="mb-3">
+                  <div className="font-bold">| 버스 이용 안내</div>
+                  {directionsList[index].bus}
+                </div>
+                <div className="mb-3">
+                  <div className="font-bold">| 주차장 이용 안내</div>
+                  {directionsList[index].parking}
+                </div>
+                <div className="mb-3">
+                  <div className="font-bold">| 상세 안내 </div>
+                  <div className="hover:text-yellow-600 hover:cursor-pointer">
+                    <a
+                      className="flex items-center"
+                      href={directionsList[index].link}
+                      target="_blank"
+                    >
+                      <FiLink className="mr-1" />
+                      <span>홈페이지 바로가기</span>
+                    </a>
                   </div>
                 </div>
               </div>
-              <div className="mb-3">
-                <div className="font-bold">| 입장 시간</div>
-                <div>{museumList[index].opening_hour}</div>
-              </div>
-              <div className="mb-3">
-                <div className="font-bold">| 입장 가격</div>
-                <div>{museumList[index].admission}</div>
-              </div>{" "}
-              <div className="mb-3">
-                <div className="font-bold">| 대표 번호</div>
-                <div>{museumList[index].phone}</div>
-              </div>
-            </div>
-          ) : (
-            <div className="p-3">
-              <div className="mb-3 text-xs text-justify">
-                <span className="font-bold">미술아카이브</span>는 미술의 역사를
-                보존하고 연구하는 미술관입니다. 미술아카이브는 예술인 개인과
-                단체가 남긴 미술사의 발자취를 좇아 수많은 기록과 자료를 수집
-                선별하여 보존하고 연구합니다. 또한 아카이브를 매개로 한
-                프로그램을 통해 다양한 사용자들과 관계를 맺고, 새로운 예술을
-                상상합니다.{" "}
-                <span className="italic">(2023년 3월 개관 예정)</span>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-      <div
-        ref={directionsRef}
-        className="w-[100%] mt-3 hidden flex-col justify-center items-center md:flex-row drop-shadow-lg"
-      >
-        <div
-          ref={mapRef}
-          className="w-[100vw] md:w-[42vw] h-[300px] md:h-[500px]"
-        ></div>
-        <div className="w-[100%] md:w-[42%] md:h-[500px] bg-gray-50">
-          {index !== "3" ? (
-            <div className="p-3">
-              <div className="mb-3">
-                <div className="font-bold">| 주소 </div>
-                {museumList[index].address}
-              </div>
-              <div className="mb-3">
-                <div className="font-bold">| 지하철 이용 안내</div>
-                {directionsList[index].subway}
-              </div>
-              <div className="mb-3">
-                <div className="font-bold">| 버스 이용 안내</div>
-                {directionsList[index].bus}
-              </div>
-              <div className="mb-3">
-                <div className="font-bold">| 주차장 이용 안내</div>
-                {directionsList[index].parking}
-              </div>
-              <div className="mb-3">
-                <div className="font-bold">| 상세 안내 </div>
-                <div className="hover:text-yellow-600 hover:cursor-pointer">
-                  <a
-                    className="flex items-center"
-                    href={directionsList[index].link}
-                    target="_blank"
-                  >
-                    <FiLink className="mr-1" />
-                    <span>홈페이지 바로가기</span>
-                  </a>
+            ) : (
+              <div className="p-3">
+                <div className="mb-3">
+                  <div className="font-bold">| 주소 </div>
+                  {museumList[index].address}
+                </div>
+                <div className="mb-3">
+                  <div className="font-bold">| 상세 안내 </div>
+                  <div className="hover:text-indigo-500 hover:cursor-pointer">
+                    <a
+                      className="flex items-center"
+                      href={directionsList[index].link}
+                      target="_blank"
+                    >
+                      <FiLink className="mr-1" />
+                      <span>홈페이지 바로가기</span>
+                    </a>
+                  </div>
                 </div>
               </div>
-            </div>
-          ) : (
-            <div className="p-3">
-              <div className="mb-3">
-                <div className="font-bold">| 주소 </div>
-                {museumList[index].address}
-              </div>
-              <div className="mb-3">
-                <div className="font-bold">| 상세 안내 </div>
-                <div className="hover:text-indigo-500 hover:cursor-pointer">
-                  <a
-                    className="flex items-center"
-                    href={directionsList[index].link}
-                    target="_blank"
-                  >
-                    <FiLink className="mr-1" />
-                    <span>홈페이지 바로가기</span>
-                  </a>
-                </div>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

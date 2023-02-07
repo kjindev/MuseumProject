@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function Location() {
@@ -38,19 +38,21 @@ export default function Location() {
   ];
 
   return (
-    <div className="pt-[10vh] w-[100%] h-[100vh] flex flex-col items-center">
+    <div className="pt-[7vh] w-[100%] h-[100vh] flex flex-col justify-center items-center">
       <div className="text-2xl md:text-3xl">방문하기</div>
-      <div className="mt-2">| 서울시립미술관을 직접 방문해보세요</div>
-      <div className="mt-7 flex flex-wrap justify-center content-center w-[95%]">
+      <div className="mt-2 text-sm md:text-base">
+        | 서울시립미술관을 직접 방문해보세요
+      </div>
+      <div className="mt-7 flex flex-wrap justify-center content-center w-[100%] md:w-[80%] xl:w-[70%]">
         {museumName.map((item, index) => (
           <div
             key={index}
-            className="w-[40%] h-[18vh] m-2 sm:w-[30%] sm:h-[24vh] lg:w-[20vw] lg:h-[25vh]"
+            className="w-[45%] h-[18vh] p-2 sm:w-[30%] sm:h-[24vh] lg:w-[25%] lg:h-[25vh]"
           >
             <Link to={`Map/${index}`}>
               <div className="w-[100%] h-[100%] p-1 md:p-2 bg-white drop-shadow-lg hover:scale-105 duration-100">
-                <img src={item.img} className="w-[100%] h-[90%] object-cover" />
-                <div className="w-[100%] text-end text-xs sm:text-sm lg:text-base">
+                <img src={item.img} className="w-[100%] h-[85%] object-cover" />
+                <div className="w-[100%] text-center text-xs sm:text-sm lg:text-base">
                   {item.name}
                 </div>
               </div>

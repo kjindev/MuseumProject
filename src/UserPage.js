@@ -1,12 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { BsDashCircle } from "react-icons/bs";
-import { AiFillEdit } from "react-icons/ai";
 import { userNameUpdate, userPhotoUpdate } from "./store/userSlice";
 import { getAuth, updateProfile } from "firebase/auth";
-import { collection, query, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  query,
+  onSnapshot,
+  doc,
+  deleteDoc,
+} from "firebase/firestore";
 import { db } from "./fbase";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import NavBar from "./components/NavBar";
+import { BsDashCircle } from "react-icons/bs";
 
 export default function UserPage() {
   const userInfo = useSelector((state) => {
@@ -24,7 +30,6 @@ export default function UserPage() {
   const artRef = useRef();
   const museumRef = useRef();
   const tooltipRef = useRef();
-  const nameTooltipRef = useRef([]);
 
   const [nameEditing, setNameEditing] = useState(false);
 
@@ -100,142 +105,195 @@ export default function UserPage() {
     }
   };
 
+  const artDeleteDatabase = (event) => {
+    try {
+      deleteDoc(
+        doc(
+          db,
+          "data",
+          userInfo.userEmail,
+          "arts",
+          event.target.parentElement.dataset.id
+        )
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const museumDeleteDatabase = (event) => {
+    try {
+      deleteDoc(
+        doc(
+          db,
+          "data",
+          userInfo.userEmail,
+          "museum",
+          event.target.parentElement.dataset.name
+        )
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
-    <div className="pb-5 md:p-0">
-      <div className="w-[100%] pt-[12vh] md:h-[100vh] flex flex-col items-center">
-        <div className="flex flex-col md:flex-row justify-center items-center w-[100%] md:w-[80%] md:h-[70vh]">
-          <div className="w-[25%] h-[100%] flex flex-col justify-center sm:justify-start items-center">
-            <img
-              src={userInfo.userPhoto}
-              loading="lazy"
-              className="w-[12vh] h-[12vh] md:w-[20vh] md:h-[20vh] object-cover rounded-[50%]"
-            />
-            {!nameEditing && (
-              <div className="text-base md:text-xl mt-3 md:mt-5">
-                {userInfo.userName === null
-                  ? userInfo.userEmail
-                  : userInfo.userName}
-              </div>
-            )}
-            {nameEditing && (
-              <form
-                onSubmit={handleUserNameSubmit}
-                className="mt-3 md:mt-5 md:ml-5 flex justify-center items-center"
-              >
-                <input
-                  onChange={handleUserNameUpdate}
-                  type="text"
-                  value={userNameChanged || ""}
-                  placeholder={userInfo.userName}
-                  className="w-[100%] md:w-[70%] text-center border border-white border-b-gray-500"
-                />
-                <input
-                  type="submit"
-                  value="확인"
-                  className="hover:cursor-pointer text-sm"
-                />
-              </form>
-            )}
-            <div className="text-sm md:text-base text-gray-500">
-              {userInfo.userEmail}
-            </div>
-            <div
-              className="my-3 md:mt-5 w-[100%] flex flex-col items-center justify-center rounded-lg"
-              onMouseOver={() => tooltipRef.current.classList.remove("hidden")}
-              onMouseOut={() => tooltipRef.current.classList.add("hidden")}
-            >
-              <div className="hover:cursor-pointer text-yellow-600 w-[100%] text-sm text-center">
-                프로필 수정
-              </div>
-              <div
-                ref={tooltipRef}
-                className="z-[2] text-center w-[70%] hidden"
-              >
-                <div
-                  onClick={() => setNameEditing(true)}
-                  className="mt-2 hover:cursor-pointer hover:text-yellow-600 text-sm"
-                >
-                  이름 변경
+    <>
+      <NavBar />
+      <div className="pb-5 md:p-0">
+        <div className="w-[100%] pt-[12vh] md:h-[100vh] flex flex-col items-center">
+          <div className="flex flex-col md:flex-row justify-center items-center w-[100%] md:w-[80%] md:h-[70vh]">
+            <div className="w-[25%] h-[100%] flex flex-col justify-center sm:justify-start items-center">
+              <img
+                src={userInfo.userPhoto}
+                loading="lazy"
+                className="w-[12vh] h-[12vh] md:w-[20vh] md:h-[20vh] object-cover rounded-[50%]"
+              />
+              {!nameEditing && (
+                <div className="text-base md:text-xl mt-3 md:mt-5">
+                  {userInfo.userName === null
+                    ? userInfo.userEmail
+                    : userInfo.userName}
                 </div>
-                <form className="mt-1">
-                  <label
-                    htmlFor="input-file"
-                    className="hover:cursor-pointer hover:text-yellow-600 text-sm"
-                  >
-                    사진 변경
-                  </label>
+              )}
+              {nameEditing && (
+                <form
+                  onSubmit={handleUserNameSubmit}
+                  className="mt-3 md:mt-5 md:ml-5 flex justify-center items-center"
+                >
                   <input
-                    type="file"
-                    accept="image/*"
-                    ref={fileInputRef}
-                    onChange={handleUserPhotoUpdate}
-                    id="input-file"
-                    className="hidden"
+                    onChange={handleUserNameUpdate}
+                    type="text"
+                    maxLength="10"
+                    value={userNameChanged || ""}
+                    placeholder={userInfo.userName}
+                    className="w-[100%] md:w-[70%] text-center border border-white border-b-gray-500"
+                  />
+                  <input
+                    type="submit"
+                    value="확인"
+                    className="hover:cursor-pointer text-sm"
                   />
                 </form>
+              )}
+              <div className="text-sm md:text-base text-gray-500">
+                {userInfo.userEmail}
+              </div>
+              <div
+                className="my-3 md:mt-5 w-[100%] flex flex-col items-center justify-center rounded-lg"
+                onMouseOver={() =>
+                  tooltipRef.current.classList.remove("hidden")
+                }
+                onMouseOut={() => tooltipRef.current.classList.add("hidden")}
+              >
+                <div className="hover:cursor-pointer text-yellow-600 w-[100%] text-sm text-center">
+                  프로필 수정
+                </div>
+                <div
+                  ref={tooltipRef}
+                  className="z-[2] text-center w-[70%] hidden"
+                >
+                  <div
+                    onClick={() => setNameEditing(true)}
+                    className="mt-2 hover:cursor-pointer hover:text-yellow-600 text-sm"
+                  >
+                    이름 변경
+                  </div>
+                  <form className="mt-1">
+                    <label
+                      htmlFor="input-file"
+                      className="hover:cursor-pointer hover:text-yellow-600 text-sm"
+                    >
+                      사진 변경
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      ref={fileInputRef}
+                      onChange={handleUserPhotoUpdate}
+                      id="input-file"
+                      className="hidden"
+                    />
+                  </form>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="md:pl-10 w-[100%] md:w-[80%] md:h-[100%]">
-            <div
-              onClick={handleMenu}
-              className="flex justify-center items-center mb-2 md:mb-7"
-            >
-              <div className="mx-7 hover:cursor-pointer">My 전시</div>
-              <div className="mx-7 hover:cursor-pointer">My 미술관</div>
-            </div>
-            <div
-              ref={artRef}
-              className="p-0 md:pl-10 flex flex-wrap justify-center w-[100%] md:h-[100%] md:overflow-x-hidden"
-            >
-              {artList === [] ? (
-                <div>Loading...</div>
-              ) : (
-                artList.map((item, index) => (
-                  <div
-                    ref={(el) => (nameTooltipRef.current[index] = el)}
-                    data-name={item.name}
-                    onClick={(event) => console.log(event.target)}
-                    key={index}
-                    className="relative hover:cursor-pointer flex flex-col w-[40%] h-[30vh] md:w-[28%] md:h-[30%] bg-white m-2 drop-shadow-lg rounded-lg"
-                  >
-                    <img
-                      src={item.img}
-                      className="w-[100%] h-[100%] object-cover rounded-lg"
-                    />
-                    <div className="hidden absolute text-sm top-[50%] translate-y-[-50%] bg-white w-[100%]">
-                      {item.name}
+            <div className="md:pl-10 w-[100%] md:w-[80%] md:h-[100%]">
+              <div
+                onClick={handleMenu}
+                className="flex justify-center items-center mb-2 md:mb-7"
+              >
+                <div className="mx-7 hover:cursor-pointer">My 전시</div>
+                <div className="mx-7 hover:cursor-pointer">My 미술관</div>
+              </div>
+              <div
+                ref={artRef}
+                className="p-0 md:pl-10 flex flex-wrap content-start w-[100%] md:h-[100%] md:overflow-x-hidden"
+              >
+                {artList === [] ? (
+                  <div>Loading...</div>
+                ) : (
+                  artList.map((item, index) => (
+                    <div
+                      data-id={item.id}
+                      key={item.id}
+                      className="flex m-2 p-2 w-[100%] h-[30%] bg-white rounded-lg drop-shadow-lg"
+                    >
+                      <img
+                        src={item.img}
+                        className="w-[30%] h-[100%] object-cover rounded-lg"
+                      />
+                      <div className="w-[70%] p-2 overflow-hidden">
+                        <div className="text-sm md:text-base font-bold">
+                          {item.name}
+                        </div>
+                        <div className="text-sm">| {item.artist}</div>
+                      </div>
+                      <BsDashCircle
+                        className="hover:cursor-pointer"
+                        size={15}
+                        onClick={artDeleteDatabase}
+                      />
                     </div>
-                  </div>
-                ))
-              )}
-            </div>
-            <div
-              ref={museumRef}
-              className="hidden pl-10 flex-wrap content-start w-[100%] h-[100%] overflow-x-hidden"
-            >
-              {museumList === [] ? (
-                <div>Loading...</div>
-              ) : (
-                museumList.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex w-[30%] h-[30%] bg-white m-2 drop-shadow-lg rounded-lg"
-                  >
-                    <img
-                      src={item.img}
-                      className="w-[100%] h-[100%] object-cover rounded-lg"
-                    />
-                    {/*<div className="text-sm p-3 text-justify">
-                      <div className="font-bold text-lg">{item.name}</div>
-                </div>*/}
-                  </div>
-                ))
-              )}
+                  ))
+                )}
+              </div>
+              <div
+                ref={museumRef}
+                className="hidden pl-10 flex-wrap content-start w-[100%] h-[100%] overflow-x-hidden"
+              >
+                {museumList === [] ? (
+                  <div>Loading...</div>
+                ) : (
+                  museumList.map((item) => (
+                    <div
+                      data-name={item.name}
+                      key={item.id}
+                      className="flex m-2 p-2 w-[100%] h-[30%] bg-white rounded-lg drop-shadow-lg"
+                    >
+                      <img
+                        src={item.img}
+                        className="w-[30%] h-[100%] object-cover rounded-lg"
+                      />
+                      <div className="w-[70%] p-2 overflow-hidden">
+                        <div className="text-sm md:text-base font-bold">
+                          {item.name}
+                        </div>
+                        <div className="text-sm">| {item.address}</div>
+                      </div>
+                      <BsDashCircle
+                        className="hover:cursor-pointer"
+                        size={15}
+                        onClick={museumDeleteDatabase}
+                      />
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

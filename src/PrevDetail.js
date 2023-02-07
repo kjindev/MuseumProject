@@ -17,6 +17,7 @@ import {
 } from "firebase/firestore";
 import { db } from "./fbase";
 import { useQueryClient } from "react-query";
+import NavBar from "./components/NavBar";
 
 export default function PrevDetail() {
   const dataPrev = useSelector((state) => {
@@ -172,11 +173,9 @@ export default function PrevDetail() {
     try {
       setDoc(doc(db, "data", userEmail, "arts", modalText[7]), {
         name: modalText[0],
-        place: modalText[3],
         artist: modalText[1],
-        end: modalText[5],
         img: modalText[2],
-        link: modalText[6],
+        id: modalText[7],
       });
       setBookMark(true);
     } catch (error) {
@@ -194,143 +193,185 @@ export default function PrevDetail() {
   };
 
   return (
-    <div className="w-[100%] flex flex-col">
-      <div
-        ref={modalRef}
-        className="z-[2] hidden fixed bg-black w-[100%] p-5 md:px-[5%] lg:px-[15%] h-[100vh] opacity-95"
-      >
-        <div className="flex flex-col">
-          <BiXCircle
-            color="white"
-            size={30}
-            className="hover:cursor-pointer self-end mb-5"
-            onClick={() => modalRef.current.classList.add("hidden")}
-          />
-          <div className="mb-5">
-            <div className="flex items-center">
-              <div className="z-[2] flex items-center">
-                <div className="text-yellow-600 text-base lg:text-3xl">
-                  {modalText[0]}
+    <>
+      <NavBar />
+      <div className="w-[100%] flex flex-col">
+        <div
+          ref={modalRef}
+          className="z-[2] hidden fixed bg-black w-[100%] p-5 md:px-[5%] lg:px-[15%] h-[100vh] opacity-95"
+        >
+          <div className="flex flex-col">
+            <BiXCircle
+              color="white"
+              size={30}
+              className="hover:cursor-pointer self-end mb-5"
+              onClick={() => modalRef.current.classList.add("hidden")}
+            />
+            <div className="mb-5">
+              <div className="flex items-center">
+                <div className="z-[2] flex items-center">
+                  <div className="text-yellow-600 text-base lg:text-3xl">
+                    {modalText[0]}
+                  </div>
                 </div>
               </div>
+              {modalText[1] && (
+                <div className="z-[2] text-white text-xs lg:text-base">
+                  | {modalText[1]}
+                </div>
+              )}
             </div>
-            {modalText[1] && (
-              <div className="z-[2] text-white text-xs lg:text-base">
-                | {modalText[1]}
-              </div>
-            )}
-          </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="z-[2] text-xs text-white">
-                전시 장소 | {modalText[3]}
-              </div>
-              <div className="z-[2] text-xs text-white ">
-                전시 기간 | {modalText[4]} ~ {modalText[5]}
-              </div>
-            </div>
-            {userEmail && (
+            <div className="flex items-center justify-between">
               <div>
-                {bookMark ? (
-                  <BsFillBookmarkCheckFill
-                    size={20}
-                    color="#ca8a04"
-                    className="hover:cursor-pointer z-[2]"
-                    onClick={deleteDatabase}
-                  />
-                ) : (
-                  <BsBookmarkPlus
-                    size={20}
-                    color="white"
-                    className="hover:cursor-pointer z-[2]"
-                    onClick={addDatabase}
-                  />
-                )}
+                <div className="z-[2] text-xs text-white">
+                  전시 장소 | {modalText[3]}
+                </div>
+                <div className="z-[2] text-xs text-white ">
+                  전시 기간 | {modalText[4]} ~ {modalText[5]}
+                </div>
               </div>
-            )}
-          </div>
-          <div className="flex flex-wrap-reverse justify-center text-xs">
-            <div className="z-[2] text-white text-justify">
-              {modalTextInfo}
-              <a
-                href={modalText[6]}
-                target="_blank"
-                className="italic text-gray-300 hover:text-yellow-600"
-              >
-                더보기
-              </a>
+              {userEmail && (
+                <div>
+                  {bookMark ? (
+                    <BsFillBookmarkCheckFill
+                      size={20}
+                      color="#ca8a04"
+                      className="hover:cursor-pointer z-[2]"
+                      onClick={deleteDatabase}
+                    />
+                  ) : (
+                    <BsBookmarkPlus
+                      size={20}
+                      color="white"
+                      className="hover:cursor-pointer z-[2]"
+                      onClick={addDatabase}
+                    />
+                  )}
+                </div>
+              )}
             </div>
-            <img
-              src={modalText[2]}
-              loading="lazy"
-              className="w-[100%] h-[50vh] my-3 object-cover z-[2]"
-            />
-          </div>
-        </div>
-      </div>
-      <div className="md:h-[10vh] mt-[7vh] xl:px-[20%] px-5 md:px-[10%]">
-        <div className="text-3xl lg:text-4xl">| 지난 전시</div>
-        <div className="flex flex-col justify-start md:flex-row md:justify-between items-start md:items-center">
-          <div className="text-sm lg:text-lg">
-            서울시립미술관의 지난 전시를 확인해보세요
-          </div>
-          <form
-            onSubmit={(event) => {
-              setSearching(true);
-              setSubmitCheck(!submitCheck);
-              event.preventDefault();
-            }}
-            className="w-[98%] md:w-[30vw] lg:w-[20vw] xl:w-[15vw] flex justify-end items-center self-center drop-shadow-lg rounded-full px-2 py-1 my-3 md:my-0 bg-gray-100"
-          >
-            <input
-              value={searchText || ""}
-              onChange={(event) => setSearchText(event.target.value)}
-              placeholder="제목, 이름으로 검색"
-              className="w-[100%] text-sm p-1 mr-2 rounded-lg bg-gray-100"
-            />
-            {!searching && (
-              <BiSearch size={20} className="hover:cursor-pointer" />
-            )}
-            {searching && (
-              <BiX
-                onClick={() => {
-                  setPage(1);
-                  handleResetSeaching();
-                }}
-                size={20}
-                className="hover:cursor-pointer"
+            <div className="flex flex-wrap-reverse justify-center text-xs">
+              <div className="z-[2] text-white text-justify">
+                {modalTextInfo}
+                <a
+                  href={modalText[6]}
+                  target="_blank"
+                  className="italic text-gray-300 hover:text-yellow-600"
+                >
+                  더보기
+                </a>
+              </div>
+              <img
+                src={modalText[2]}
+                loading="lazy"
+                className="w-[100%] h-[50vh] my-3 object-cover z-[2]"
               />
-            )}
-          </form>
+            </div>
+          </div>
         </div>
-      </div>
-      {dataPrev !== [] && (
-        <div
-          ref={dataRef}
-          className="md:mt-[3vh] xl:px-[20%] px-5 md:px-[10%] w-[100%] md:h-[70vh] flex flex-wrap content-start justify-start"
-        >
-          {searching ? (
-            searchedData ? (
-              searchedData[page - 1].map((item, index) => (
+        <div className="md:h-[10vh] mt-[7vh] xl:px-[20%] px-5 md:px-[10%]">
+          <div className="text-3xl lg:text-4xl">| 지난 전시</div>
+          <div className="flex flex-col justify-start md:flex-row md:justify-between items-start md:items-center">
+            <div className="text-sm lg:text-lg">
+              전시 제목과 아티스트 이름으로 검색해보세요
+            </div>
+            <form
+              onSubmit={(event) => {
+                setSearching(true);
+                setSubmitCheck(!submitCheck);
+                event.preventDefault();
+              }}
+              className="w-[98%] md:w-[30vw] lg:w-[20vw] xl:w-[15vw] flex justify-end items-center self-center drop-shadow-lg rounded-full px-2 py-1 my-3 md:my-0 bg-gray-100"
+            >
+              <input
+                value={searchText || ""}
+                onChange={(event) => setSearchText(event.target.value)}
+                placeholder="제목, 이름으로 검색"
+                className="w-[100%] text-sm p-1 mr-2 rounded-lg bg-gray-100"
+              />
+              {!searching && (
+                <BiSearch size={20} className="hover:cursor-pointer" />
+              )}
+              {searching && (
+                <BiX
+                  onClick={() => {
+                    setPage(1);
+                    handleResetSeaching();
+                  }}
+                  size={20}
+                  className="hover:cursor-pointer"
+                />
+              )}
+            </form>
+          </div>
+        </div>
+        {dataPrev !== [] && (
+          <div
+            ref={dataRef}
+            className="md:mt-[3vh] xl:px-[20%] px-5 md:px-[10%] w-[100%] md:h-[70vh] flex flex-wrap content-start justify-start"
+          >
+            {searching ? (
+              searchedData ? (
+                searchedData[page - 1].map((item, index) => (
+                  <div
+                    onClick={handleModal}
+                    key={index}
+                    data-index={index}
+                    data-name={item.DP_NAME}
+                    data-artist={item.DP_ARTIST}
+                    data-id={item.DP_SEQ}
+                    data-img={item.DP_MAIN_IMG}
+                    data-place={item.DP_PLACE}
+                    data-start={item.DP_START}
+                    data-end={item.DP_END}
+                    data-artpart={item.DP_ART_PART}
+                    data-artcnt={item.DP_ART_CNT}
+                    data-info={item.DP_INFO}
+                    data-link={item.DP_LNK}
+                    className="w-[50%] h-[30vh] md:w-[25%] md:h-[22vh] text-xs p-2 mb-3 flex-col hover:cursor-pointer hover:scale-105 duration-100 drop-shadow-lg"
+                  >
+                    <img
+                      src={item?.DP_MAIN_IMG}
+                      loading="lazy"
+                      className="w-[100%] h-[80%] object-cover"
+                    />
+                    <div className="m-2 mt-3">
+                      {item?.DP_NAME.length < 35
+                        ? item?.DP_NAME
+                        : item?.DP_NAME.slice(0, 35) + "..." || ""}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="w-[100%] h-[100%] flex items-center justify-center text-xl">
+                  <div className="mr-2">검색 결과가 없습니다</div>
+                  <BsEmojiDizzy />
+                </div>
+              )
+            ) : (
+              dataPrev?.map((item, index) => (
                 <div
                   onClick={handleModal}
-                  key={index}
-                  data-index={index}
-                  data-name={item.DP_NAME}
-                  data-artist={item.DP_ARTIST}
-                  data-id={item.DP_SEQ}
-                  data-img={item.DP_MAIN_IMG}
-                  data-place={item.DP_PLACE}
-                  data-start={item.DP_START}
-                  data-end={item.DP_END}
-                  data-artpart={item.DP_ART_PART}
-                  data-artcnt={item.DP_ART_CNT}
-                  data-info={item.DP_INFO}
-                  data-link={item.DP_LNK}
-                  className="w-[50%] h-[30vh] md:w-[25%] md:h-[22vh] text-xs p-2 mb-3 flex-col hover:cursor-pointer hover:scale-105 duration-100 drop-shadow-lg"
+                  key={item?.DP_SEQ}
+                  data-name={item?.DP_NAME}
+                  data-artist={item?.DP_ARTIST}
+                  data-id={item?.DP_SEQ}
+                  data-img={item?.DP_MAIN_IMG}
+                  data-place={item?.DP_PLACE}
+                  data-start={item?.DP_START}
+                  data-end={item?.DP_END}
+                  data-artpart={item?.DP_ART_PART}
+                  data-artcnt={item?.DP_ART_CNT}
+                  data-info={item?.DP_INFO}
+                  data-link={item?.DP_LNK}
+                  className={
+                    index < 12
+                      ? "w-[50%] h-[30vh] md:w-[25%] md:h-[22vh] text-xs p-2 mb-3 flex-col hover:cursor-pointer hover:scale-105 duration-100 drop-shadow-lg"
+                      : "hidden w-[50%] h-[30vh] md:w-[25%] md:h-[22vh] text-xs p-2 mb-3 flex-col hover:cursor-pointer hover:scale-105 duration-100 drop-shadow-lg"
+                  }
                 >
                   <img
-                    src={item?.DP_MAIN_IMG}
+                    src={item?.DP_MAIN_IMG || ""}
                     loading="lazy"
                     className="w-[100%] h-[80%] object-cover"
                   />
@@ -341,68 +382,29 @@ export default function PrevDetail() {
                   </div>
                 </div>
               ))
-            ) : (
-              <div className="w-[100%] h-[100%] flex items-center justify-center text-xl">
-                <div className="mr-2">검색 결과가 없습니다</div>
-                <BsEmojiDizzy />
-              </div>
-            )
-          ) : (
-            dataPrev?.map((item, index) => (
+            )}
+          </div>
+        )}
+        {pageList === undefined ? (
+          <div>Loading...</div>
+        ) : (
+          <div className="text-xs md:text-sm py-5 px-[10%] md:h-[8vh] xl:px-[20%] flex justify-center items-center">
+            {pageList.map((item, index) => (
               <div
-                onClick={handleModal}
-                key={item?.DP_SEQ}
-                data-name={item?.DP_NAME}
-                data-artist={item?.DP_ARTIST}
-                data-id={item?.DP_SEQ}
-                data-img={item?.DP_MAIN_IMG}
-                data-place={item?.DP_PLACE}
-                data-start={item?.DP_START}
-                data-end={item?.DP_END}
-                data-artpart={item?.DP_ART_PART}
-                data-artcnt={item?.DP_ART_CNT}
-                data-info={item?.DP_INFO}
-                data-link={item?.DP_LNK}
+                key={index}
                 className={
-                  index < 12
-                    ? "w-[50%] h-[30vh] md:w-[25%] md:h-[22vh] text-xs p-2 mb-3 flex-col hover:cursor-pointer hover:scale-105 duration-100 drop-shadow-lg"
-                    : "hidden w-[50%] h-[30vh] md:w-[25%] md:h-[22vh] text-xs p-2 mb-3 flex-col hover:cursor-pointer hover:scale-105 duration-100 drop-shadow-lg"
+                  page === index + 1
+                    ? "bg-yellow-500 px-2 rounded-full hover:cursor-pointer"
+                    : "px-2 hover:cursor-pointer"
                 }
+                onClick={(event) => setPage(parseInt(event.target.innerText))}
               >
-                <img
-                  src={item?.DP_MAIN_IMG || ""}
-                  loading="lazy"
-                  className="w-[100%] h-[80%] object-cover"
-                />
-                <div className="m-2 mt-3">
-                  {item?.DP_NAME.length < 35
-                    ? item?.DP_NAME
-                    : item?.DP_NAME.slice(0, 35) + "..." || ""}
-                </div>
+                {item}
               </div>
-            ))
-          )}
-        </div>
-      )}
-      {pageList === undefined ? (
-        <div>Loading...</div>
-      ) : (
-        <div className="text-xs md:text-sm py-5 px-[10%] md:h-[8vh] xl:px-[20%] flex justify-center items-center">
-          {pageList.map((item, index) => (
-            <div
-              key={index}
-              className={
-                page === index + 1
-                  ? "bg-yellow-500 px-2 rounded-full hover:cursor-pointer"
-                  : "px-2 hover:cursor-pointer"
-              }
-              onClick={(event) => setPage(parseInt(event.target.innerText))}
-            >
-              {item}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </>
   );
 }

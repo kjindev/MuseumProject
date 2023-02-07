@@ -31,6 +31,7 @@ export default function NavBar({ handleScrollView }) {
   const { pathname } = useLocation();
   const handleLogOut = () => {
     try {
+      tooltipRef.current.classList.add("hidden");
       const auth = getAuth();
       signOut(auth);
     } catch (error) {
@@ -54,8 +55,19 @@ export default function NavBar({ handleScrollView }) {
     menuRef.current.classList.add("hidden");
   }, [pathname]);
 
+  const handleMyMenu = () => {
+    if (tooltipRef.current.classList.value.includes("hidden")) {
+      tooltipRef.current.classList.remove("hidden");
+    } else {
+      tooltipRef.current.classList.add("hidden");
+    }
+  };
+
   return (
-    <div onClick={handleScrollView} className="fixed z-[2] w-[100%]">
+    <div
+      onClick={handleScrollView}
+      className="flex flex-col fixed z-[2] w-[100%]"
+    >
       <div
         ref={menuRef}
         className="menu-moving hidden fixed ml-[20%] w-[80%] h-[100vh] bg-black px-3 py-1 md:hidden"
@@ -144,15 +156,17 @@ export default function NavBar({ handleScrollView }) {
           )}
         </div>
       </div>
-      <div className="h-[7vh] p-2 mx-1 flex justify-between">
+      <div className="flex justify-between items-center p-2 px-4 bg-white">
         {pathname === "/" ? (
-          <div className="px-2 logo-font">OurMuseum</div>
+          <div className="px-1 md:px-2 logo-font text-sm md:text-base">
+            OurMuseum
+          </div>
         ) : (
           <Link to="/">
             <AiOutlineHome size={25} />
           </Link>
         )}
-        <div className="flex maxmd:hidden">
+        <div className="flex items-center maxmd:hidden">
           {pathname === "/" ? (
             <>
               <div
@@ -175,52 +189,36 @@ export default function NavBar({ handleScrollView }) {
               >
                 방문하기
               </div>
+              {!isLoggedIn && (
+                <Link to="/LogIn">
+                  <div className="w-[100px] ml-5 py-1 text-center cursor-pointer text-sm maxmd:hidden hover:text-yellow-600">
+                    로그인
+                  </div>
+                </Link>
+              )}
+              {isLoggedIn && (
+                <div
+                  onClick={handleMyMenu}
+                  className="w-[100px] ml-5 py-1 text-center cursor-pointer text-sm maxmd:hidden hover:text-yellow-600"
+                >
+                  {userInfo.userName === null ? (
+                    <div className="font-bold">
+                      {userInfo.userEmail.length > 5
+                        ? `${userInfo.userEmail.substr(0, 5) + "..."}님`
+                        : `${userInfo.userEmail}님`}
+                    </div>
+                  ) : (
+                    <div className="font-bold">
+                      {userInfo.userName.length > 5
+                        ? `${userInfo.userName.substr(0, 5) + "..."}님`
+                        : `${userInfo.userName}님`}
+                    </div>
+                  )}
+                </div>
+              )}
             </>
           ) : (
             <div className="px-2 py-1"></div>
-          )}
-          {!isLoggedIn && (
-            <Link to="/LogIn">
-              <div className="ml-5 px-3 py-1 cursor-pointer text-sm border border-black w-[100px] text-center hover:bg-yellow-600 hover:border-yellow-600">
-                로그인
-              </div>
-            </Link>
-          )}
-          {isLoggedIn && (
-            <div
-              onMouseOver={() => tooltipRef.current.classList.remove("hidden")}
-              onMouseOut={() => tooltipRef.current.classList.add("hidden")}
-              className={
-                pathname === "/userPage"
-                  ? "hidden"
-                  : "px-3 py-1 cursor-pointer text-sm w-[100px] h-[40px] text-end"
-              }
-            >
-              {userInfo.userName === null ? (
-                <div className="font-bold">
-                  {userInfo.userEmail.length > 5
-                    ? `${userInfo.userEmail.substr(0, 5) + "..."}님`
-                    : `${userInfo.userEmail}님`}
-                </div>
-              ) : (
-                <div className="font-bold">
-                  {userInfo.userName.length > 5
-                    ? `${userInfo.userName.substr(0, 5) + "..."}님`
-                    : `${userInfo.userName}님`}
-                </div>
-              )}
-              <div ref={tooltipRef} className="z-[2] bg-white hidden">
-                <Link to="/userPage">
-                  <div className="mt-1 hover:text-yellow-600">마이페이지</div>
-                </Link>
-                <div
-                  onClick={handleLogOut}
-                  className="mt-1 hover:text-yellow-600"
-                >
-                  로그아웃
-                </div>
-              </div>
-            </div>
           )}
         </div>
         {pathname !== "/userPage" && (
@@ -243,6 +241,24 @@ export default function NavBar({ handleScrollView }) {
           </div>
         )}
       </div>
+      {isLoggedIn && (
+        <div
+          ref={tooltipRef}
+          className="w-[100px] self-end mr-4 text-sm text-center z-[2] bg-white hidden"
+        >
+          <Link to="/userPage">
+            <div className="hover:cursor-pointer hover:text-yellow-600">
+              마이페이지
+            </div>
+          </Link>
+          <div
+            onClick={handleLogOut}
+            className="mt-1 hover:cursor-pointer hover:text-yellow-600"
+          >
+            로그아웃
+          </div>
+        </div>
+      )}
     </div>
   );
 }
