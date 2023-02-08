@@ -123,7 +123,7 @@ export default function PrevDetail() {
         }
         setSearchedData(dataArray);
       } catch (error) {
-        console.log("에러");
+        console.log(error);
       }
     } else {
       return [];

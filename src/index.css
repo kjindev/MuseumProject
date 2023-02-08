@@ -51,3 +51,16 @@ body {
     transform: translate(0, 0);
   }
 }
+
+.image-box {
+  animation: leftmoving 30s linear infinite;
+}
+
+@keyframes leftmoving {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(-50%, 0);
+  }
+}

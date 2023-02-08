@@ -29,7 +29,7 @@ export default function Now() {
   }, [slideIndex]);
 
   return (
-    <div className="pt-[10vh] pb-10 flex flex-col justify-center items-center w-[100%] h-[100vh]">
+    <div className="pt-[10vh] pb-10 flex flex-col justify-center items-center w-[100%] md:h-[100vh]">
       {dataNow === [] ? (
         <div>Loading...</div>
       ) : (
@@ -38,7 +38,7 @@ export default function Now() {
           <div className="mt-0 md:mt-2 text-center text-sm md:text-base">
             | 클릭하여 자세한 내용을 확인해보세요
           </div>
-          <div className="mt-1 md:mt-7 w-[600%] flex">
+          <div className="mt-1 lg:mt-7 w-[600%] flex">
             {dataNow.map((item, index) => (
               <div
                 key={index}
@@ -51,9 +51,9 @@ export default function Now() {
                 <img
                   src={item.DP_MAIN_IMG}
                   loading="lazy"
-                  className="w-[100%] h-[30vh] md:w-[80%] md:h-[30vh] lg:w-[420px] lg:h-[60vh] xl:w-[510px] object-cover"
+                  className="w-[70%] h-[30vh] md:w-[80%] md:h-[30vh] lg:w-[420px] lg:h-[60vh] xl:w-[510px] object-cover"
                 />
-                <div className="w-[100%] md:w-[80%] lg:w-[420px] lg:h-[60vh] xl:w-[510px] p-3 bg-gray-50">
+                <div className="w-[70%] md:w-[80%] lg:w-[420px] lg:h-[60vh] xl:w-[510px] p-3 bg-gray-50">
                   <div>
                     <div className="title-font font-bold text-lg sm:text-xl md:text-2xl xl:text-3xl">
                       {item.DP_NAME}

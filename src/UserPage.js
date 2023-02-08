@@ -143,14 +143,14 @@ export default function UserPage() {
       <div className="pb-5 md:p-0">
         <div className="w-[100%] pt-[12vh] md:h-[100vh] flex flex-col items-center">
           <div className="flex flex-col md:flex-row justify-center items-center w-[100%] md:w-[80%] md:h-[70vh]">
-            <div className="w-[25%] h-[100%] flex flex-col justify-center sm:justify-start items-center">
+            <div className="w-[100%] md:w-[25%] h-[100%] flex flex-col justify-center sm:justify-start items-center">
               <img
                 src={userInfo.userPhoto}
                 loading="lazy"
-                className="w-[12vh] h-[12vh] md:w-[20vh] md:h-[20vh] object-cover rounded-[50%]"
+                className="w-[10vh] h-[10vh] sm:w-[12vh] sm:h-[12vh] md:w-[20vh] md:h-[20vh] object-cover rounded-[50%]"
               />
               {!nameEditing && (
-                <div className="text-base md:text-xl mt-3 md:mt-5">
+                <div className="sm:text-base md:text-xl mt-3 md:mt-5">
                   {userInfo.userName === null
                     ? userInfo.userEmail
                     : userInfo.userName}
@@ -237,7 +237,7 @@ export default function UserPage() {
                     <div
                       data-id={item.id}
                       key={item.id}
-                      className="flex m-2 p-2 w-[100%] h-[30%] bg-white rounded-lg drop-shadow-lg"
+                      className="flex m-2 p-2 w-[100%] h-[20vh] md:h-[30%] bg-white rounded-lg drop-shadow-lg"
                     >
                       <img
                         src={item.img}
@@ -260,7 +260,7 @@ export default function UserPage() {
               </div>
               <div
                 ref={museumRef}
-                className="hidden pl-10 flex-wrap content-start w-[100%] h-[100%] overflow-x-hidden"
+                className="hidden flex-wrap content-start w-[100%] h-[100%] overflow-x-hidden"
               >
                 {museumList === [] ? (
                   <div>Loading...</div>
@@ -269,7 +269,7 @@ export default function UserPage() {
                     <div
                       data-name={item.name}
                       key={item.id}
-                      className="flex m-2 p-2 w-[100%] h-[30%] bg-white rounded-lg drop-shadow-lg"
+                      className="flex m-2 p-2 w-[100%] h-[20vh] md:h-[30%] bg-white rounded-lg drop-shadow-lg"
                     >
                       <img
                         src={item.img}

@@ -17,7 +17,11 @@ import {
 } from "./store/userSlice";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useQuery } from "react-query";
-import { dataNowUpdate, dataPrevUpdate } from "./store/dataSlice";
+import {
+  dataNowUpdate,
+  dataPrevUpdate,
+  bannerImageUpdate,
+} from "./store/dataSlice";
 import { windowStateUpdate } from "./store/windowSlice";
 import UserNotFound from "./UserNotFound";
 
@@ -84,11 +88,35 @@ function App() {
           dataPrev.push(museumDataCopy[i]);
         }
       }
+      for (let i = 0; i < 20; i++) {
+        if (i < 10) {
+          dataPrevBanner.push(dataPrev[i]);
+        } else {
+          dataPrevBanner[i] = dataPrev[i - 10];
+        }
+      }
+
       dispatch(dataNowUpdate(dataNow));
       dispatch(dataPrevUpdate(dataPrev));
+      dispatch(bannerImageUpdate(dataPrevBanner));
     }
   }, [status]);
 
+  const dataPrevBanner = [];
+  /*
+  useEffect(() => {
+    if (dataPrev !== []) {
+      for (let i = 0; i < 20; i++) {
+        if (i < 10) {
+          dataPrevBanner.push(dataPrev[i]);
+        } else {
+          dataPrevBanner[i] = dataPrev[i - 10];
+        }
+      }
+      dispatch(bannerImageUpdate(dataPrevBanner));
+    }
+  }, [dataPrev]);
+*/
   return (
     <>
       <Routes>

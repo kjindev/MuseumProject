@@ -84,7 +84,7 @@ export default function NavBar({ handleScrollView }) {
                 className="w-[5vh] h-[5vh] mr-3 rounded-full"
               />
               {isLoggedIn ? (
-                <div className="text-white">
+                <div className="text-white sm:text-sm">
                   {userInfo.userName === null ? (
                     <div>{`${userInfo.userEmail} 님`}</div>
                   ) : (
@@ -102,7 +102,7 @@ export default function NavBar({ handleScrollView }) {
             </div>
             <div className="mt-5">
               {isLoggedIn ? (
-                <div className="flex justify-center items-center">
+                <div className="flex maxxs:flex-col justify-center items-center">
                   <Link to="/userPage">
                     <div className="mx-5">마이페이지</div>
                   </Link>

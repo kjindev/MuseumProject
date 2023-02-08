@@ -390,7 +390,7 @@ export default function Map() {
               </div>
             ) : (
               <div className="p-3">
-                <div className="mb-3 text-xs text-justify">
+                <div className="mb-3 text-justify">
                   <span className="font-bold">미술아카이브</span>는 미술의
                   역사를 보존하고 연구하는 미술관입니다. 미술아카이브는 예술인
                   개인과 단체가 남긴 미술사의 발자취를 좇아 수많은 기록과 자료를

@@ -5,6 +5,7 @@ const dataSlice = createSlice({
   initialState: {
     dataNowState: [],
     dataPrevState: [],
+    bannerImageState: [],
     navNameState: "intro",
     slideIndexState: 0,
     bookMark: false,
@@ -15,6 +16,9 @@ const dataSlice = createSlice({
     },
     dataPrevUpdate: (state, action) => {
       state.dataPrevState = action.payload;
+    },
+    bannerImageUpdate: (state, action) => {
+      state.bannerImageState = action.payload;
     },
     navNameUpdate: (state, action) => {
       state.navNameState = action.payload;
@@ -32,6 +36,7 @@ export default dataSlice;
 export const {
   dataNowUpdate,
   dataPrevUpdate,
+  bannerImageUpdate,
   navNameUpdate,
   slideIndexUpdate,
   bookMarkUpdate,
