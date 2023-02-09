@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/MuseumProject/static/css/main.868a451c.css",
-    "main.js": "/MuseumProject/static/js/main.865d2264.js",
+    "main.js": "/MuseumProject/static/js/main.2ac3179a.js",
     "index.html": "/MuseumProject/index.html",
     "main.868a451c.css.map": "/MuseumProject/static/css/main.868a451c.css.map",
-    "main.865d2264.js.map": "/MuseumProject/static/js/main.865d2264.js.map"
+    "main.2ac3179a.js.map": "/MuseumProject/static/js/main.2ac3179a.js.map"
   },
   "entrypoints": [
     "static/css/main.868a451c.css",
-    "static/js/main.865d2264.js"
+    "static/js/main.2ac3179a.js"
   ]
 }
