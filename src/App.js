@@ -30,7 +30,7 @@ function App() {
   const isLoggedIn = useSelector((state) => {
     return state.auth.logInState;
   });
-  const { pathname } = useLocation();
+  const dataPrevBanner = [];
   const auth = getAuth();
   const [dataNow, setDataNow] = useState([]);
   const [dataPrev, setDataPrev] = useState([]);
@@ -70,7 +70,7 @@ function App() {
   const { status, data } = useQuery("museum", async () =>
     (
       await fetch(
-        `http://openapi.seoul.go.kr:8088/${process.env.REACT_APP_API_KEY}/json/ListExhibitionOfSeoulMOAInfo/1/100/`
+        `https://openapi.seoul.go.kr:8088/${process.env.REACT_APP_API_KEY}/json/ListExhibitionOfSeoulMOAInfo/1/100/`
       )
     ).json()
   );
@@ -102,21 +102,6 @@ function App() {
     }
   }, [status]);
 
-  const dataPrevBanner = [];
-  /*
-  useEffect(() => {
-    if (dataPrev !== []) {
-      for (let i = 0; i < 20; i++) {
-        if (i < 10) {
-          dataPrevBanner.push(dataPrev[i]);
-        } else {
-          dataPrevBanner[i] = dataPrev[i - 10];
-        }
-      }
-      dispatch(bannerImageUpdate(dataPrevBanner));
-    }
-  }, [dataPrev]);
-*/
   return (
     <>
       <Routes>
