@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useLayoutEffect } from "react";
 import Intro from "./components/Intro";
 import Now from "./components/Now";
 import Prev from "./components/Prev";
@@ -15,7 +15,7 @@ export default function Home() {
     return state.setWindow.windowState;
   });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isWindow) {
       window.scroll(0, sessionStorage.y);
     }

@@ -70,7 +70,7 @@ function App() {
   const { status, data } = useQuery("museum", async () =>
     (
       await fetch(
-        `https://openapi.seoul.go.kr:8088/${process.env.REACT_APP_API_KEY}/json/ListExhibitionOfSeoulMOAInfo/1/100/`
+        "https://port-0-museumapi-server-r8xoo2mleqt3zgv.sel3.cloudtype.app/"
       )
     ).json()
   );
