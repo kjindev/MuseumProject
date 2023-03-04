@@ -8,7 +8,7 @@ import {
 } from "react-icons/bs";
 import { FiLink } from "react-icons/fi";
 import { useSelector } from "react-redux";
-import { db } from "./fbase";
+import { db } from "../fbase";
 import {
   setDoc,
   doc,
@@ -18,7 +18,7 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
-import NavBar from "./components/NavBar";
+import NavBar from "../mainPage/NavBar";
 
 export default function Map() {
   const { index } = useParams();
@@ -411,7 +411,7 @@ export default function Map() {
             ref={mapRef}
             className="w-[100vw] md:w-[42vw] h-[300px] md:h-[500px]"
           ></div>
-          <div className="w-[100%] md:w-[42%] md:h-[500px] bg-gray-50">
+          <div className="w-[100%] md:w-[42%] md:h-[500px]">
             {index !== "3" ? (
               <div className="p-3">
                 <div className="mb-3">

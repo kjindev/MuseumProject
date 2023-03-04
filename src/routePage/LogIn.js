@@ -9,7 +9,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
-import { auth } from "./fbase";
+import { auth } from "../fbase";
 import { useSelector } from "react-redux";
 
 export default function LogIn() {

@@ -11,8 +11,8 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
-import { db } from "./fbase";
-import NavBar from "./components/NavBar";
+import { db } from "../fbase";
+import NavBar from "../mainPage/NavBar";
 
 export default function NowDetail() {
   const dataNow = useSelector((state) => {
@@ -71,13 +71,13 @@ export default function NowDetail() {
         {dataNow === undefined ? (
           <div>Loading...</div>
         ) : (
-          <div className="flex flex-col md:pt-0 md:flex-row h-[100vh] justify-center items-center  drop-shadow-lg">
+          <div className="flex flex-col md:pt-0 md:flex-row h-[100vh] justify-center items-center drop-shadow-lg">
             <img
               src={dataNow[index].DP_MAIN_IMG}
               loading="lazy"
               className="w-[100%] md:w-[42%] h-[40vh] md:h-[500px] object-cover"
             />
-            <div className="w-[100%] md:w-[42%] h-[500px] p-3 overflow-scroll overflow-x-hidden bg-gray-50">
+            <div className="w-[100%] md:w-[42%] h-[500px] p-3 overflow-scroll overflow-x-hidden">
               <div className="flex items-center">
                 <div className="title-font font-bold text-xl md:text-2xl mr-2">
                   {dataNow[index].DP_NAME}

@@ -1,10 +1,10 @@
 import React, { useRef, useLayoutEffect } from "react";
-import Intro from "./components/Intro";
-import Now from "./components/Now";
-import Prev from "./components/Prev";
-import Location from "./components/Location";
-import Information from "./components/Information";
-import NavBar from "./components/NavBar";
+import Intro from "./mainPage/Intro";
+import Now from "./mainPage/Now";
+import Prev from "./mainPage/Prev";
+import Location from "./mainPage/Location";
+import Information from "./mainPage/Information";
+import NavBar from "./mainPage/NavBar";
 import { useDispatch, useSelector } from "react-redux";
 import { navNameUpdate } from "./store/dataSlice";
 

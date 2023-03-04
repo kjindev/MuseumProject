@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Home from "./Home";
-import LogIn from "./LogIn";
-import UserPage from "./UserPage";
-import NowDetail from "./NowDetail";
-import PrevDetail from "./PrevDetail";
-import Map from "./Map";
-import NotFound from "./NotFound";
+import LogIn from "./routePage/LogIn";
+import UserPage from "./routePage/UserPage";
+import NowDetail from "./routePage/NowDetail";
+import PrevDetail from "./routePage/PrevDetail";
+import Map from "./routePage/Map";
+import NotFound from "./404Page/NotFound";
+import UserNotFound from "./404Page/UserNotFound";
 import { useDispatch, useSelector } from "react-redux";
 import { logIn, logOut } from "./store/authSlice";
 import {
@@ -23,7 +24,6 @@ import {
   bannerImageUpdate,
 } from "./store/dataSlice";
 import { windowStateUpdate } from "./store/windowSlice";
-import UserNotFound from "./UserNotFound";
 
 function App() {
   const dispatch = useDispatch();
@@ -70,7 +70,7 @@ function App() {
   const { status, data } = useQuery("museum", async () =>
     (
       await fetch(
-        "https://port-0-museumapi-server-r8xoo2mleqt3zgv.sel3.cloudtype.app/"
+        "https://port-0-museumapi-r8xoo2mletmb3b8.sel3.cloudtype.app/"
       )
     ).json()
   );

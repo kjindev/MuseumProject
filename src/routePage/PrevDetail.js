@@ -15,9 +15,9 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
-import { db } from "./fbase";
+import { db } from "../fbase";
 import { useQueryClient } from "react-query";
-import NavBar from "./components/NavBar";
+import NavBar from "../mainPage/NavBar";
 
 export default function PrevDetail() {
   const dataPrev = useSelector((state) => {

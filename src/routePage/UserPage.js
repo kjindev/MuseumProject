@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { userNameUpdate, userPhotoUpdate } from "./store/userSlice";
+import { userNameUpdate, userPhotoUpdate } from "../store/userSlice";
 import { getAuth, updateProfile } from "firebase/auth";
 import {
   collection,
@@ -9,9 +9,9 @@ import {
   doc,
   deleteDoc,
 } from "firebase/firestore";
-import { db } from "./fbase";
+import { db } from "../fbase";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import NavBar from "./components/NavBar";
+import NavBar from "../mainPage/NavBar";
 import { BsDashCircle } from "react-icons/bs";
 
 export default function UserPage() {

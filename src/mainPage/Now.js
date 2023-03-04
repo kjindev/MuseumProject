@@ -38,7 +38,7 @@ export default function Now() {
           <div className="mt-0 md:mt-2 text-center text-sm md:text-base">
             | 클릭하여 자세한 내용을 확인해보세요
           </div>
-          <div className="mt-1 lg:mt-7 w-[600%] flex">
+          <div className="mt-1 lg:mt-7 w-[700%] flex">
             {dataNow.map((item, index) => (
               <div
                 key={index}
