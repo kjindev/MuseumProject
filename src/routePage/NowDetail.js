@@ -77,7 +77,7 @@ export default function NowDetail() {
               loading="lazy"
               className="w-[100%] md:w-[42%] h-[40vh] md:h-[500px] object-cover"
             />
-            <div className="w-[100%] md:w-[42%] h-[500px] p-3 overflow-scroll overflow-x-hidden">
+            <div className="w-[100%] md:w-[42%] h-[500px] p-3 bg-white overflow-scroll overflow-x-hidden">
               <div className="flex items-center">
                 <div className="title-font font-bold text-xl md:text-2xl mr-2">
                   {dataNow[index].DP_NAME}
@@ -89,6 +89,16 @@ export default function NowDetail() {
                     <div>| {dataNow[index].DP_ARTIST}</div>
                     <div>| {dataNow[index].DP_PLACE}</div>
                     <div>| {dataNow[index].DP_END} 까지</div>
+                    <div>
+                      |{" "}
+                      <a
+                        href={dataNow[index].DP_LNK}
+                        target="_blank"
+                        className="italic hover:text-yellow-600"
+                      >
+                        홈페이지 링크
+                      </a>
+                    </div>
                   </div>
                   {userEmail && (
                     <div>
@@ -111,13 +121,6 @@ export default function NowDetail() {
                 </div>
                 <div className="text-justify mt-3">
                   {dataNow[index].DP_INFO}
-                  <a
-                    href={dataNow[index].DP_LNK}
-                    target="_blank"
-                    className="italic text-gray-500 hover:text-yellow-600"
-                  >
-                    홈페이지 바로가기
-                  </a>
                 </div>
               </div>
             </div>

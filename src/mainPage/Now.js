@@ -30,7 +30,7 @@ export default function Now() {
 
   return (
     <div className="pt-[10vh] pb-10 flex flex-col justify-center items-center w-[100%] md:h-[100vh]">
-      {dataNow === [] ? (
+      {dataNow.length === 0 ? (
         <div>Loading...</div>
       ) : (
         <div>
@@ -38,7 +38,7 @@ export default function Now() {
           <div className="mt-0 md:mt-2 text-center text-sm md:text-base">
             | 클릭하여 자세한 내용을 확인해보세요
           </div>
-          <div className="mt-1 lg:mt-7 w-[700%] flex">
+          <div className={`mt-1 lg:mt-7 flex w-[${dataNow.length}00%]`}>
             {dataNow.map((item, index) => (
               <div
                 key={index}

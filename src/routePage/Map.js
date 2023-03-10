@@ -348,7 +348,7 @@ export default function Map() {
             src={museumList[index].img}
             className="w-[100%] md:w-[42%] h-[40vh] md:h-[500px] object-cover"
           />
-          <div className="w-[100%] md:w-[42%] md:h-[500px] object-cover bg-gray-50">
+          <div className="w-[100%] md:w-[42%] md:h-[500px] object-cover bg-white">
             {index !== "3" ? (
               <div className="p-3">
                 <div className="mb-3">
@@ -411,7 +411,7 @@ export default function Map() {
             ref={mapRef}
             className="w-[100vw] md:w-[42vw] h-[300px] md:h-[500px]"
           ></div>
-          <div className="w-[100%] md:w-[42%] md:h-[500px]">
+          <div className="w-[100%] md:w-[42%] md:h-[500px] bg-white">
             {index !== "3" ? (
               <div className="p-3">
                 <div className="mb-3">
